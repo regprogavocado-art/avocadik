@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🥑 Авокадик лав пис</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(160deg, #1a3c2e 0%, #2d6a4f 30%, #40916c 60%, #52b788 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        body::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 50%, rgba(255,255,255,0.03) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 700px;
+            padding: 50px 40px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 32px;
+            backdrop-filter: blur(12px);
+            border: 2px solid rgba(82, 183, 136, 0.3);
+            box-shadow: 0 25px 80px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
+        }
+        .avocado-icon {
+            font-size: 5rem;
+            display: block;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 4px 15px rgba(82, 183, 136, 0.3));
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #95d5b2, #52b788, #40916c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 900;
+        }
+        .subtitle {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: #b7e4c7;
+            font-weight: 300;
+        }
+        p {
+            font-size: 1.15rem;
+            line-height: 1.7;
+            margin-bottom: 35px;
+            color: #d8f3dc;
+        }
+        p strong {
+            color: #95d5b2;
+            -webkit-text-fill-color: #95d5b2;
+        }
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 35px;
+        }
+        .tag {
+            padding: 6px 18px;
+            background: rgba(82, 183, 136, 0.2);
+            border: 1px solid rgba(82, 183, 136, 0.3);
+            border-radius: 50px;
+            font-size: 0.9rem;
+            color: #95d5b2;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 18px 48px;
+            background: linear-gradient(135deg, #52b788, #2d6a4f);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 60px;
+            font-size: 1.15rem;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 25px rgba(82, 183, 136, 0.4);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .btn:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 12px 40px rgba(82, 183, 136, 0.6);
+            background: linear-gradient(135deg, #40916c, #1a3c2e);
+        }
+        .footer {
+            margin-top: 35px;
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.3);
+            letter-spacing: 1px;
+        }
+        .footer span { color: #52b788; }
+        @media (max-width: 480px) {
+            .container { padding: 30px 20px; }
+            h1 { font-size: 2rem; }
+            .avocado-icon { font-size: 3.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <span class="avocado-icon">🥑</span>
+        <h1>Веге салам от Авокадика!</h1>
+        <p class="subtitle">Лав пис всем причастным ❤️</p>
+        <p>
+            Приведу трафик на ваши КР, МГ, БС, ТС<br>
+            — короче <strong>везде</strong> 🔥
+        </p>
+        <div class="tags">
+            <span class="tag">📊 КР</span>
+            <span class="tag">📱 МГ</span>
+            <span class="tag">💬 БС</span>
+            <span class="tag">📈 ТС</span>
+        </div>
+        <a href="https://t.me/tclink1" class="btn" target="_blank">
+            ✍️ Написать в TG
+        </a>
+        <div class="footer">made with 🥑 by <span>Avocadik</span></div>
+    </div>
+</body>
+</html>
