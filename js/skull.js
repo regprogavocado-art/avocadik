@@ -153,7 +153,7 @@ void main() {
   float shade = 0.35 + 0.65 * max(dot(n, normalize(vec3(0.4, 0.6, 1.0))), 0.0);
   shade *= 0.35 + 0.65 * smoothstep(-6.0, -2.0, mv.z); // depth fade
   vShade = shade;
-  vDim = mix(1.0, 0.35, uSleep);
+  vDim = mix(1.0, 0.45, uSleep);
 
   float size = uSize * (0.8 + 0.4 * aRand.w);
   if (aKind > 1.5) size *= 1.5; // глаза

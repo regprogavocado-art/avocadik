@@ -31,6 +31,8 @@ async function start() {
   bus.on('boot:done', async ({ sound }) => {
     bootDone = true;
     document.body.style.overflow = '';
+    scrollTo(0, 0); // scroll anchoring может дёрнуть страницу при снятии overflow
+    if (window.ScrollTrigger) ScrollTrigger.refresh();
     // speech может ещё инициализироваться (выбор голоса до 2с) — дожидаемся
     while (!refs.speech) await new Promise((r) => setTimeout(r, 100));
     refs.setSound(sound);
