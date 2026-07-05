@@ -1,0 +1,98 @@
+/* Постоянный слой атмосферы: сканлайны, зерно, виньетка, глитч-кадр, курсор */
+
+.scanlines {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(255, 255, 255, 0.035) 0 1px,
+    transparent 1px 3px
+  );
+  mix-blend-mode: overlay;
+}
+
+.grain {
+  position: fixed;
+  inset: -60px;
+  z-index: 31;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.06 0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain-shift 0.9s steps(4) infinite;
+}
+@keyframes grain-shift {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-24px, 16px); }
+  50% { transform: translate(18px, -20px); }
+  75% { transform: translate(-12px, -14px); }
+  100% { transform: translate(0, 0); }
+}
+body.is-mobile .grain { animation: none; }
+
+.vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 29;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.55) 100%);
+}
+
+/* полноэкранный глитч-кадр: body.flash-glitch на ~160мс */
+#glitchflash {
+  position: fixed;
+  inset: 0;
+  z-index: 45;
+  pointer-events: none;
+  display: none;
+}
+body.flash-glitch #glitchflash {
+  display: block;
+  background:
+    linear-gradient(rgba(255, 42, 42, 0.08), rgba(255, 42, 42, 0.08)),
+    repeating-linear-gradient(0deg, transparent 0 6px, rgba(255, 255, 255, 0.05) 6px 8px);
+  animation: gflash 0.16s steps(3);
+}
+@keyframes gflash {
+  0% { transform: translateX(-12px); clip-path: inset(8% 0 60% 0); }
+  50% { transform: translateX(10px); clip-path: inset(52% 0 12% 0); }
+  100% { transform: translateX(0); clip-path: inset(0); }
+}
+body.flash-glitch main { animation: gshift 0.16s steps(2); }
+@keyframes gshift {
+  0% { transform: translateX(6px); filter: hue-rotate(40deg); }
+  100% { transform: none; filter: none; }
+}
+
+/* кастомный курсор (только точные указатели) */
+#cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 70;
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;
+  border: 1px solid var(--fg);
+  mix-blend-mode: difference;
+  pointer-events: none;
+  display: none;
+  transition: width 0.15s, height 0.15s, margin 0.15s, border-color 0.15s, rotate 0.15s;
+}
+#cursor.is-link {
+  width: 30px;
+  height: 30px;
+  margin: -15px 0 0 -15px;
+  border-color: var(--red);
+  rotate: 45deg;
+  mix-blend-mode: normal;
+}
+@media (hover: hover) and (pointer: fine) {
+  #cursor { display: block; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grain { animation: none; }
+  #cursor { display: none; }
+}
