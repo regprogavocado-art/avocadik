@@ -145,6 +145,7 @@ async function start() {
       get speechMode() { return speech.mode; },
       get voice() { return speech.voiceName; },
       get soundOn() { return soundOn; },
+      get audio() { return audio.state; },
       has3d: !!skull,
       forceSleep() { bus.emit('idle:sleep'); },
       forceWake() { bus.emit('idle:wake'); },

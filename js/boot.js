@@ -1,6 +1,7 @@
 import { BOOT_LINES, BOOT_GRANTED, BOOT_OPEN, BOOT_ENTER, BOOT_SKIP_HINT } from './config.js';
 import { bus } from './bus.js';
 import { isOpen } from './countdown.js';
+import { audio } from './audio.js';
 
 // Boot-прелоадер «взлом»: печать лога с реальным прогрессом загрузки черепа,
 // финал ACCESS GRANTED → клик = user gesture для звука и старта сцены.
@@ -83,6 +84,15 @@ export function initBoot({ instant = false } = {}) {
     boot.classList.remove('is-flash');
 
     const finish = (sound) => {
+      if (sound) {
+        // синхронно внутри клика: разблокировка WebAudio и TTS (iOS/автоплей)
+        audio.unlock();
+        try {
+          const warm = new SpeechSynthesisUtterance(' ');
+          warm.volume = 0;
+          speechSynthesis.speak(warm);
+        } catch { /* нет TTS — субтитры остаются */ }
+      }
       bus.emit('boot:done', { sound });
       boot.classList.add('is-out');
       setTimeout(() => boot.remove(), 700);
