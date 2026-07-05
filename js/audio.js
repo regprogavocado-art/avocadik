@@ -30,31 +30,44 @@ function noiseBuffer(seconds = 2) {
 }
 
 function startAmbient() {
+  // низкий гул (для наушников/колонок с басом)
   const noise = ctx.createBufferSource();
   noise.buffer = noiseBuffer(4);
   noise.loop = true;
   const lp = ctx.createBiquadFilter();
   lp.type = 'lowpass';
-  lp.frequency.value = 110;
+  lp.frequency.value = 180;
   const ng = ctx.createGain();
-  ng.gain.value = 0.05;
+  ng.gain.value = 0.1;
 
   const hum = ctx.createOscillator();
   hum.type = 'sine';
-  hum.frequency.value = 42;
+  hum.frequency.value = 48;
   const hg = ctx.createGain();
-  hg.gain.value = 0.02;
+  hg.gain.value = 0.05;
+
+  // «воздух» серверной в среднем диапазоне — слышен на любых динамиках
+  const air = ctx.createBufferSource();
+  air.buffer = noiseBuffer(4);
+  air.loop = true;
+  const bp = ctx.createBiquadFilter();
+  bp.type = 'bandpass';
+  bp.frequency.value = 700;
+  bp.Q.value = 1.2;
+  const ag = ctx.createGain();
+  ag.gain.value = 0.022;
 
   const lfo = ctx.createOscillator();
   lfo.frequency.value = 0.08;
   const lfoG = ctx.createGain();
-  lfoG.gain.value = 0.012;
+  lfoG.gain.value = 0.025;
   lfo.connect(lfoG).connect(hg.gain);
 
   noise.connect(lp).connect(ng).connect(master);
+  air.connect(bp).connect(ag).connect(master);
   hum.connect(hg).connect(master);
-  noise.start(); hum.start(); lfo.start();
-  ambientNodes = [noise, hum, lfo];
+  noise.start(); air.start(); hum.start(); lfo.start();
+  ambientNodes = [noise, air, hum, lfo];
 }
 
 function burst({ freq = 2800, type = 'bandpass', dur = 0.03, gain = 0.1 }) {
@@ -89,6 +102,21 @@ function tone({ from = 1200, to = null, dur = 0.06, gain = 0.05, type = 'square'
 
 export const audio = {
   get enabled() { return enabled; },
+  get state() {
+    return ctx ? { ctx: ctx.state, gain: +master.gain.value.toFixed(2), enabled } : { ctx: 'none', enabled };
+  },
+
+  // Синхронная разблокировка внутри пользовательского клика (iOS/автоплей-политики)
+  unlock() {
+    try {
+      ensureCtx();
+      ctx.resume();
+      const b = ctx.createBufferSource();
+      b.buffer = ctx.createBuffer(1, 1, 22050);
+      b.connect(ctx.destination);
+      b.start(0);
+    } catch { /* нет WebAudio — просто тишина */ }
+  },
 
   enable(on) {
     enabled = on;
@@ -96,24 +124,31 @@ export const audio = {
       ensureCtx();
       ctx.resume();
       if (!ambientNodes.length) startAmbient();
-      master.gain.cancelScheduledValues(ctx.currentTime);
-      master.gain.linearRampToValueAtTime(1, ctx.currentTime + 0.8);
+      const now = ctx.currentTime;
+      master.gain.cancelScheduledValues(now);
+      master.gain.setValueAtTime(master.gain.value, now); // без опорной точки ramp может не стартовать
+      master.gain.linearRampToValueAtTime(1, now + 0.6);
+      // слышимое подтверждение «звук включён»
+      setTimeout(() => { audio.blip(); }, 150);
+      setTimeout(() => { audio.bassHit(); }, 320);
     } else if (ctx) {
-      master.gain.cancelScheduledValues(ctx.currentTime);
-      master.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.3);
+      const now = ctx.currentTime;
+      master.gain.cancelScheduledValues(now);
+      master.gain.setValueAtTime(master.gain.value, now);
+      master.gain.linearRampToValueAtTime(0, now + 0.25);
     }
   },
 
-  click: () => burst({ freq: 2800, dur: 0.025, gain: 0.09 }),
-  blip: () => tone({ from: 1400, to: 900, dur: 0.05, gain: 0.035 }),
-  pop: () => burst({ freq: 1200, type: 'highpass', dur: 0.06, gain: 0.16 }),
+  click: () => burst({ freq: 2800, dur: 0.03, gain: 0.22 }),
+  blip: () => tone({ from: 1400, to: 900, dur: 0.06, gain: 0.09 }),
+  pop: () => burst({ freq: 1200, type: 'highpass', dur: 0.06, gain: 0.28 }),
   bassHit: () => {
-    tone({ from: 110, to: 36, dur: 0.32, gain: 0.5, type: 'sine' });
-    burst({ freq: 220, type: 'lowpass', dur: 0.12, gain: 0.3 });
+    tone({ from: 110, to: 36, dur: 0.32, gain: 0.7, type: 'sine' });
+    burst({ freq: 300, type: 'lowpass', dur: 0.12, gain: 0.4 });
   },
   stamp: () => {
-    tone({ from: 90, to: 40, dur: 0.2, gain: 0.55, type: 'sine' });
-    burst({ freq: 800, type: 'bandpass', dur: 0.05, gain: 0.2 });
+    tone({ from: 90, to: 40, dur: 0.2, gain: 0.7, type: 'sine' });
+    burst({ freq: 800, type: 'bandpass', dur: 0.05, gain: 0.3 });
   },
 };
 
