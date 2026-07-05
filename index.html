@@ -1,151 +1,221 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🥑 Авокадик лав пис</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(160deg, #1a3c2e 0%, #2d6a4f 30%, #40916c 60%, #52b788 100%);
-            color: #fff;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 20px;
-            position: relative;
-            overflow: hidden;
-        }
-        body::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at 30% 50%, rgba(255,255,255,0.03) 0%, transparent 50%);
-            pointer-events: none;
-        }
-        .container {
-            position: relative;
-            z-index: 1;
-            max-width: 700px;
-            padding: 50px 40px;
-            background: rgba(0,0,0,0.3);
-            border-radius: 32px;
-            backdrop-filter: blur(12px);
-            border: 2px solid rgba(82, 183, 136, 0.3);
-            box-shadow: 0 25px 80px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
-        }
-        .avocado-icon {
-            font-size: 5rem;
-            display: block;
-            margin-bottom: 15px;
-            filter: drop-shadow(0 4px 15px rgba(82, 183, 136, 0.3));
-            animation: float 3s ease-in-out infinite;
-        }
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-        h1 {
-            font-size: 2.8rem;
-            margin-bottom: 15px;
-            background: linear-gradient(135deg, #95d5b2, #52b788, #40916c);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-weight: 900;
-        }
-        .subtitle {
-            font-size: 1.3rem;
-            margin-bottom: 10px;
-            color: #b7e4c7;
-            font-weight: 300;
-        }
-        p {
-            font-size: 1.15rem;
-            line-height: 1.7;
-            margin-bottom: 35px;
-            color: #d8f3dc;
-        }
-        p strong {
-            color: #95d5b2;
-            -webkit-text-fill-color: #95d5b2;
-        }
-        .tags {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 35px;
-        }
-        .tag {
-            padding: 6px 18px;
-            background: rgba(82, 183, 136, 0.2);
-            border: 1px solid rgba(82, 183, 136, 0.3);
-            border-radius: 50px;
-            font-size: 0.9rem;
-            color: #95d5b2;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: 18px 48px;
-            background: linear-gradient(135deg, #52b788, #2d6a4f);
-            color: #fff;
-            text-decoration: none;
-            border-radius: 60px;
-            font-size: 1.15rem;
-            font-weight: 700;
-            transition: all 0.3s ease;
-            box-shadow: 0 6px 25px rgba(82, 183, 136, 0.4);
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        .btn:hover {
-            transform: translateY(-4px) scale(1.02);
-            box-shadow: 0 12px 40px rgba(82, 183, 136, 0.6);
-            background: linear-gradient(135deg, #40916c, #1a3c2e);
-        }
-        .footer {
-            margin-top: 35px;
-            font-size: 0.85rem;
-            color: rgba(255,255,255,0.3);
-            letter-spacing: 1px;
-        }
-        .footer span { color: #52b788; }
-        @media (max-width: 480px) {
-            .container { padding: 30px 20px; }
-            h1 { font-size: 2rem; }
-            .avocado-icon { font-size: 3.5rem; }
-        }
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>NEGRA — закрытый форум. Открытие скоро.</title>
+  <meta name="description" content="NEGRA — закрытый форум старой школы. Треды, люди, репутация. Никаких алгоритмов. Предрегистрация открыта: первые получают низкий номер и бейдж основателя.">
+  <meta name="theme-color" content="#050505">
+  <meta property="og:title" content="NEGRA — закрытый форум. Открытие скоро.">
+  <meta property="og:description" content="Тёмная сторона интернета. Та, где ещё интересно. Займи низкий номер до открытия шлюзов.">
+  <meta property="og:image" content="assets/img/poster.png">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/fonts.css">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/boot.css">
+  <link rel="stylesheet" href="css/effects.css">
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "./vendor/three/three.module.min.js",
+      "three/addons/": "./vendor/three/addons/"
+    }
+  }
+  </script>
 </head>
 <body>
-    <div class="container">
-        <span class="avocado-icon">🥑</span>
-        <h1>Веге салам от Авокадика!</h1>
-        <p class="subtitle">Лав пис всем причастным ❤️</p>
-        <p>
-            Приведу трафик на ваши КР, МГ, БС, ТС<br>
-            — короче <strong>везде</strong> 🔥
-        </p>
-        <div class="tags">
-            <span class="tag">📊 КР</span>
-            <span class="tag">📱 МГ</span>
-            <span class="tag">💬 БС</span>
-            <span class="tag">📈 ТС</span>
-        </div>
-        <a href="https://t.me/tclink1" class="btn" target="_blank">
-            ✍️ Написать в TG
-        </a>
-        <div class="footer">made with 🥑 by <span>Avocadik</span></div>
+
+  <!-- BOOT: прелоадер-«взлом» (чистый DOM, рисуется до загрузки three) -->
+  <div id="boot" aria-label="Загрузка">
+    <div class="boot-log"></div>
+    <div class="boot-final">
+      <div class="boot-granted">ACCESS GRANTED</div>
+      <button class="boot-enter" type="button">[ НАЖМИ, ЧТОБЫ ВОЙТИ ]</button>
+      <a class="boot-nosound" href="#">войти без звука</a>
+      <div class="boot-hint">нажми любую клавишу, если не терпится</div>
     </div>
+  </div>
+
+  <!-- 3D-слой -->
+  <canvas id="gl" aria-hidden="true"></canvas>
+
+  <!-- Фолбэк без WebGL / reduced-motion -->
+  <div class="poster" aria-hidden="true">
+    <div class="poster-name">NEGRA</div>
+    <div class="poster-sub">// ЗАКРЫТЫЙ ФОРУМ. ОТКРЫТИЕ СКОРО.</div>
+  </div>
+
+  <!-- Служебные оверлеи -->
+  <div class="scanlines" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="vignette" aria-hidden="true"></div>
+  <div id="glitchflash" aria-hidden="true"></div>
+  <div id="cursor" aria-hidden="true"></div>
+
+  <!-- HUD: углы экрана -->
+  <div class="hud" aria-hidden="false">
+    <button id="logo" class="hud-corner hud-tl" type="button">NEGRA://PRE-LAUNCH</button>
+    <button class="hud-corner hud-tr" type="button" data-snd>[SOUND: OFF]</button>
+    <div class="hud-corner hud-bl hero-ui">STATUS: ГОТОВИМ ШЛЮЗЫ</div>
+    <div class="hud-corner hud-br hero-ui">SCROLL ↓</div>
+  </div>
+
+  <main>
+    <!-- 1. HERO -->
+    <section id="hero">
+      <div class="hero-over hero-ui">// ЗАКРЫТЫЙ ФОРУМ. ОТКРЫТИЕ СКОРО.</div>
+      <h1 class="h1" aria-label="NEGRA">
+        <span class="h1-letter">N</span><span class="h1-letter">E</span><span class="h1-letter">G</span><span class="h1-letter">R</span><span class="h1-letter">A</span>
+      </h1>
+      <div class="hero-bottom hero-ui">
+        <p class="hero-sub">Тёмная сторона интернета. Та, где ещё интересно.</p>
+        <div class="cd-wrap">
+          <div class="cd-top">ДО ОТКРЫТИЯ ШЛЮЗОВ</div>
+          <div class="countdown" data-countdown></div>
+          <div class="cd-under">// T-MINUS · время московское · открытие не переносится</div>
+        </div>
+        <a class="btn-cta" data-cta href="#">ЗАНЯТЬ МЕСТО →</a>
+        <div class="micro">предрегистрация = ранний доступ + низкий номер. бесплатно.</div>
+      </div>
+    </section>
+
+    <!-- 2. МАНИФЕСТ -->
+    <section id="manifesto">
+      <div class="overline">// МАНИФЕСТ</div>
+      <div class="mf">
+        <div class="mf-line">ИНТЕРНЕТ СТАЛ ЛЕНТОЙ.</div>
+        <div class="mf-line">ЛЕНТА РЕШАЕТ, ЧТО ТЫ УВИДИШЬ.</div>
+        <div class="mf-line">АЛГОРИТМ РЕШАЕТ, С КЕМ ТЫ ГОВОРИШЬ.</div>
+        <div class="mf-line is-red">МЫ ТАК НЕ ИГРАЕМ.</div>
+        <div class="mf-line">NEGRA — ФОРУМ СТАРОЙ ШКОЛЫ.</div>
+        <div class="mf-line">ЛЮДИ. ТРЕДЫ. РЕПУТАЦИЯ. ВСЁ.</div>
+      </div>
+      <div class="mf-note">никаких рекомендаций. никакой ленты. зашёл — читаешь то, что выбрал сам.</div>
+    </section>
+
+    <!-- 3. ЧТО ВНУТРИ -->
+    <section id="inside">
+      <div class="overline">// РАЗДЕЛЫ И ПРАВИЛА ИГРЫ</div>
+      <h2 class="h2">ЧТО ВНУТРИ</h2>
+      <div class="bento">
+        <article class="bento-card is-big">
+          <div class="card-idx">[01]</div>
+          <h3>ФОРУМ, А НЕ ЛЕНТА</h3>
+          <p>Треды, ветки, холивары по правилам. Как в лучшие годы интернета — только без пыли.</p>
+        </article>
+        <article class="bento-card">
+          <div class="card-idx">[02]</div>
+          <h3>РЕПУТАЦИЯ РЕШАЕТ</h3>
+          <p>Уровень качается постами, а не донатом. Пишешь дело — растёшь. Пишешь воду — сидишь в песочнице.</p>
+        </article>
+        <article class="bento-card">
+          <div class="card-idx">[03]</div>
+          <h3>ПРИВАТНЫЕ ВЕТКИ</h3>
+          <p>Часть разделов видят не все. Доступ открывается уровнем. Что там — узнаешь, когда дорастёшь.</p>
+        </article>
+        <article class="bento-card is-wide">
+          <div class="card-idx">[04]</div>
+          <h3>IT / КОД / ЖЕЛЕЗО</h3>
+          <p>Разборы, пет-проекты, «посмотрите мой код» без токсичности. Ну, почти без.</p>
+        </article>
+        <article class="bento-card">
+          <div class="card-idx">[05]</div>
+          <h3>МЕМЫ И ИСТОРИИ</h3>
+          <p>Оффтоп, где рождается локальный фольклор. 6 7 придумали не мы, но вайб тот.</p>
+        </article>
+        <article class="bento-card">
+          <div class="card-idx">[06]</div>
+          <h3>ИВЕНТЫ И ДВИЖ</h3>
+          <p>Конкурсы, AMA с интересными людьми, внутренние челленджи. Призы — да.</p>
+        </article>
+        <article class="bento-card is-term">
+          <div class="card-idx">[07] NEGRA://LIVE</div>
+          <div class="term" id="liveTerm"></div>
+          <div class="term-cursor">_</div>
+        </article>
+      </div>
+    </section>
+
+    <!-- 4. ПРИВИЛЕГИИ РАННЕГО ДОСТУПА -->
+    <section id="early">
+      <div class="overline">// EARLY ACCESS</div>
+      <h2 class="h2">ПЕРВЫЕ ПОЛУЧАЮТ ВСЁ</h2>
+      <div class="early-grid">
+        <div class="pass">
+          <div class="pass-head">NEGRA <span>//</span> FOUNDER PASS</div>
+          <div class="pass-caption" id="passCaption">ТВОЙ НОМЕР ПРЯМО СЕЙЧАС:</div>
+          <div class="pass-num" id="memberNum">#0001</div>
+          <div class="pass-bar" aria-hidden="true"></div>
+          <div class="pass-foot">MEMBER SINCE: ДО ОТКРЫТИЯ</div>
+          <div class="badge" id="badge">FOUNDER</div>
+        </div>
+        <div class="priv-list">
+          <div class="priv-item">
+            <h3>НИЗКИЙ НОМЕР. НАВСЕГДА.</h3>
+            <p>MEMBER #0047 читается. MEMBER #48213 — нет. Номер выдаётся по порядку регистрации и не меняется никогда.</p>
+          </div>
+          <div class="priv-item">
+            <h3>БЕЙДЖ FOUNDER</h3>
+            <p>Отметка «был до открытия». Не продаётся, не передаётся, не выдаётся после запуска. Вообще никак.</p>
+          </div>
+          <div class="priv-item">
+            <h3>ЗАКРЫТАЯ ВЕТКА ОСНОВАТЕЛЕЙ</h3>
+            <p>Раздел, куда после открытия дверь заваривается. Внутри — админы, первые люди и решения, которые потом станут правилами.</p>
+          </div>
+          <div class="priv-item">
+            <h3>ПРАВО ГОЛОСА</h3>
+            <p>Первые выбирают, каким будет форум: разделы, правила, вайб. Остальные придут на готовое.</p>
+          </div>
+          <a class="priv-more" data-cta href="#">→ забрать номер, пока трёхзначный</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. ФИНАЛЬНЫЙ CTA -->
+    <section id="final">
+      <h2 class="h2 final-h">ШЛЮЗЫ ОТКРОЮТСЯ ОДИН РАЗ.</h2>
+      <p class="final-sub">Внутрь пустят всех. Но первым — первое.</p>
+      <div class="countdown cd-compact" data-countdown></div>
+      <a class="btn-cta btn-huge" id="finalBtn" data-cta href="#">ПОЛУЧИТЬ ДОСТУП</a>
+      <div class="micro">30 секунд на регистрацию. ник + почта. без паспорта, мы не банк.</div>
+      <div class="micro micro-dim">передумать можно. вернуть низкий номер — нельзя.</div>
+    </section>
+
+    <!-- 6. ФУТЕР -->
+    <footer>
+      <div class="foot-row">
+        <div class="foot-left">NEGRA © 2026 // сделано в темноте</div>
+        <nav class="foot-links">
+          <a data-tg href="#">TELEGRAM</a>
+          <a data-mail href="#">НАПИСАТЬ НАМ</a>
+          <a href="#">ПРАВИЛА</a>
+        </nav>
+        <div class="foot-right" id="uptime">UPTIME: 00d 00h 00m // BUILD v0.9.1-prelaunch</div>
+      </div>
+      <div class="foot-disclaimer">NEGRA — легальное комьюнити. «Дарк» — это эстетика, а не род занятий. Всё по закону, всё по любви.</div>
+    </footer>
+  </main>
+
+  <!-- Субтитры черепа -->
+  <div id="captions" role="status" aria-live="polite">
+    <span class="cap-prefix">&gt;</span> <span class="cap-text"></span><span class="cap-cursor">_</span>
+  </div>
+
+  <!-- Пасхалка «6 7» -->
+  <div id="egg67" aria-hidden="true">
+    <div class="egg67-digit">6</div>
+  </div>
+
+  <!-- Мобильный sticky-бар -->
+  <div class="mobilebar">
+    <button type="button" data-cc data-short>[CC✓]</button>
+    <a data-cta href="#">ЗАНЯТЬ МЕСТО</a>
+    <button type="button" data-snd data-short>[SND✕]</button>
+  </div>
+
+  <script src="vendor/gsap/gsap.min.js"></script>
+  <script src="vendor/gsap/ScrollTrigger.min.js"></script>
+  <script type="module" src="js/main.js"></script>
 </body>
 </html>
