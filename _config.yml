@@ -6,3 +6,4 @@ exclude:
   - README.md
   - .gitignore
   - CLAUDE.md
+  - NEXT-SESSION-PROMPT.md
