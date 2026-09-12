@@ -99,7 +99,7 @@ async function privateCatalogPatterns() {
         assert.equal(new URL(page.url()).pathname.replace(/\/+$/, ''), '/payment');
       }
       if (!process.env.UI_SKIP_CHAT) {
-        const cta = page.locator('main [data-chat]').first();
+        const cta = page.locator('main [data-chat]:visible').first();
         const historyResponse = page.waitForResponse(response => /\/api\/chat\/[^/]+\/messages/.test(response.url()) && response.request().method() === 'GET');
         await cta.click();
         assert.equal((await historyResponse).status(), 200, 'Chat history API returns200');

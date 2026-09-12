@@ -2,12 +2,14 @@
 import { env } from 'cloudflare:workers';
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import PageHeading from '../../components/PageHeading.astro';
-import ProductList from '../../components/ProductList.astro';
+import TariffGrid from '../../components/TariffGrid.astro';
+import DomainSearch from '../../components/DomainSearch.astro';
 import ChatButton from '../../components/ChatButton.astro';
 import CTABand from '../../components/CTABand.astro';
 import BodyText from '../../components/BodyText.astro';
 import Icon from '../../components/Icon.astro';
 import { categories, safeImage, categorySrcSet } from '../../components/catalog';
+import { pricedProducts } from '../../lib/hosting';
 import { getSiteData } from '../../lib/content';
 const { pages, products, countries, settings } = await getSiteData(env);
 const category = categories.find(category => category.slug === Astro.params.category);
@@ -15,11 +17,20 @@ if (!category) return Astro.rewrite('/404');
 const page = pages.find(page => page.slug === `category-${category.slug}`);
 if (!page) return Astro.rewrite('/404');
 const selection = products.filter(product => product.category === category.slug);
+const tariffs = pricedProducts(selection);
 const categoryImage = safeImage(selection.find(product => product.image)?.image);
 const soon = selection.length > 0 ? selection.every(product => product.availability === 'soon') : 'soon' in category;
+const isDomains = category.slug === 'domains';
+const isServers = ['vps','dedicated'].includes(category.slug);
+const intro = isDomains ? 'Цена указана за регистрацию на первый год. Доступность имени и стоимость продления подтвердим перед счётом.' : category.slug === 'proxies' ? 'Цена за один IP на 30 дней. Обратите внимание на минимальное количество IP в выбранном тарифе.' : 'Сравните конфигурации и страны. Цены ориентировочные; наличие и итоговую сумму подтвердим перед счётом.';
 ---
-<SiteLayout title={page?.title || category.title} description={page?.summary || category.description} settings={settings}>
-  <PageHeading title={page?.title || category.title} description={page?.summary || category.description} parent={{href:'/catalog',label:'Каталог'}} />
-  <section class="section"><div class="container"><nav class="category-tabs" aria-label="Категории услуг">{categories.map(item => <a href={`/catalog/${item.slug}`} aria-current={category.slug === item.slug ? 'page' : undefined}>{item.title}</a>)}</nav><div class="category-detail"><div>{categoryImage && <img class="category-render" src={categoryImage} srcset={categorySrcSet(categoryImage)} sizes="(max-width: 760px) 100vw, 55vw" width="1600" height="900" loading="lazy" decoding="async" alt={category.title}/>}<BodyText text={page?.body || category.description}/>{category.details.length > 0 && <ul class="check-list">{category.details.map(detail => <li><Icon name="check"/>{detail}</li>)}</ul>}{soon && <p class="status status-soon">Скоро</p>}</div><aside class="detail-aside"><h2>{soon ? 'Следите за запуском' : 'Нужна помощь с выбором?'}</h2><p>{soon ? 'Расскажем о планах и доступных альтернативах в чате.' : 'Расскажите о задаче, желаемой локации и сроке. Уточним наличие и предложим условия.'}</p><ChatButton label={soon ? 'Узнать о запуске' : 'Обсудить задачу'} text={`Здравствуйте! Интересует ${category.title}. Подскажите ${soon ? 'планы запуска' : 'условия и наличие'}.`}/></aside></div>{selection.length > 0 ? <><div class="section-head"><h2>{soon ? 'Готовим к запуску' : 'Предложения'}</h2></div><ProductList products={selection} countries={countries}/></> : <div class="empty-state"><h2>{soon ? 'Готовим новое направление' : 'Подбор по запросу'}</h2><p>{soon ? 'Предложения появятся здесь после запуска.' : 'Расскажите о требованиях в чате. Уточним доступные конфигурации и стоимость.'}</p></div>}</div></section>
-  <CTABand />
+<SiteLayout title={page.title} description={page.summary} settings={settings}>
+  <div class="hosting-category"><PageHeading title={page.title} description={page.summary} parent={{href:'/catalog',label:'Каталог'}} />
+  <section class="section"><div class="container"><nav class="category-tabs" aria-label="Категории услуг">{categories.filter(item => pages.some(page => page.slug === `category-${item.slug}`)).map(item => <a href={`/catalog/${item.slug}/`} aria-current={category.slug === item.slug ? 'page' : undefined}>{item.title}</a>)}</nav>
+  {isDomains && <div class="catalog-domain-search"><DomainSearch products={selection} id="domain-catalog" compact/></div>}
+  {!soon && <p class="catalog-intro-note">{intro}</p>}
+  {tariffs.length > 0 && <h2 class="sr-only">Тарифы: {category.title}</h2>}
+  {tariffs.length > 0 ? <TariffGrid products={tariffs} countries={countries} filters={!isDomains} id={`tariffs-${category.slug}`}/> : <div class="tariff-empty"><Icon name={category.icon}/><h2>{soon ? 'Bulletproof-хостинг — скоро' : 'Подбор по запросу'}</h2><p>{soon ? 'Готовим направление абузоустойчивого размещения. Тарифы и условия появятся здесь после запуска.' : 'Расскажите о требованиях. Подберём конфигурацию и согласуем стоимость.'}</p><ChatButton label={soon ? 'Узнать о запуске' : 'Подобрать конфигурацию'} text={`Здравствуйте! Интересует ${category.title}. ${soon ? 'Сообщите о запуске.' : 'Помогите подобрать конфигурацию.'}`}/></div>}
+  <div class="catalog-information"><div><h2>{isDomains ? 'Регистрация и продление' : isServers ? 'Что важно перед заказом' : 'Условия подключения'}</h2><BodyText text={page.body || category.description}/>{categoryImage && <img class="category-render" src={categoryImage} srcset={categorySrcSet(categoryImage)} sizes="(max-width:760px) 100vw, 55vw" width="1600" height="900" loading="lazy" decoding="async" alt={category.title}/>}<ol class="catalog-order-steps"><li><span>01</span><strong>{isDomains ? 'Выберите имя' : 'Выберите тариф'}</strong><p>{isDomains ? 'Укажите домен и нужную зону в форме выше.' : 'Сравните характеристики, страну и период оплаты.'}</p></li><li><span>02</span><strong>Отправьте заявку</strong><p>Нажмите «Заказать», проверьте параметры и продолжите в чате.</p></li><li><span>03</span><strong>Получите счёт</strong><p>Подтвердим наличие и стоимость. Оплата — криптовалютой.</p></li></ol></div><aside class="catalog-help"><h3>{soon ? 'Следите за запуском' : 'Нужна другая конфигурация?'}</h3><p>{soon ? 'Сообщите нам о требованиях к размещению. Обсудим планы и доступные альтернативы.' : 'Напишите, какие ресурсы и локация нужны. Поможем подобрать вариант под проект.'}</p><ChatButton label={soon ? 'Обсудить планы' : 'Помочь с выбором'} text={`Здравствуйте! Интересует ${category.title}. Помогите подобрать решение.`}/><a class="detail-payment-link" href="/payment/">Как проходит оплата</a></aside></div>
+  </div></section></div><CTABand />
 </SiteLayout>

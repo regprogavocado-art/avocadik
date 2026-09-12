@@ -1,0 +1,30 @@
+---
+import type { Product, Country } from '../lib/content';
+import { pricedProducts, productNumbers, productCountryList, featuredVps } from '../lib/hosting';
+import TariffCard from './TariffCard.astro';
+import CountryFlag from './CountryFlag.astro';
+import ChatButton from './ChatButton.astro';
+interface Props { products: Product[]; countries?: Country[]; id?: string; filters?: boolean; featured?: boolean; limit?: number; }
+const {products, countries = [], id = 'tariffs', filters = false, featured = false, limit} = Astro.props;
+const tariffs = pricedProducts(products);
+const featuredIds = new Set(featuredVps(tariffs).map(product => product.id));
+const initial = featured ? tariffs.filter(product => featuredIds.has(product.id)) : tariffs.slice(0, limit || tariffs.length);
+const initialIds = new Set(initial.map(product => product.id));
+const initialCount = initial.length;
+const locationCodes = new Set(tariffs.flatMap(product => productCountryList(product,countries).map(country => country.code)));
+const locations = countries.filter(country => country.status === 'published' && locationCodes.has(country.code));
+const currencies = [...new Set(tariffs.map(product => product.priceCurrency))];
+const serverPlans = tariffs.some(product => ['vps','dedicated'].includes(product.category));
+const ramOptions = [...new Set(tariffs.map(product => productNumbers(product).ramGb).filter((value):value is number => value !== null))].sort((a,b)=>a-b);
+const ordered = [...initial, ...tariffs.filter(product => !initialIds.has(product.id))];
+---
+<div class="tariff-browser" id={id} data-tariff-grid={filters || undefined}>
+  {filters && <div class="tariff-filters"><div class="tariff-country-filters" role="group" aria-label="Страна размещения"><button type="button" data-filter-country="" aria-pressed="true">Все страны</button>{locations.map(country => <button type="button" data-filter-country={country.code} aria-pressed="false"><CountryFlag code={country.code} name={country.name} decorative />{country.name}</button>)}</div><div class="tariff-filter-options">{serverPlans && ramOptions.length > 1 && <label>Память<select data-filter-ram><option value="">Любой объём</option>{ramOptions.map(ram => <option value={ram}>От {ram} GB</option>)}</select></label>}{currencies.length > 1 && <label>Валюта цены<select data-filter-currency><option value="">Все валюты</option>{currencies.map(currency => <option value={currency}>{currency}</option>)}</select></label>}<button type="button" class="tariff-reset" data-filter-reset disabled>Сбросить</button><p class="tariff-count" data-filter-count role="status" aria-live="polite" aria-atomic="true">{initialCount < tariffs.length ? `Показано ${initialCount} из ${tariffs.length} тарифов` : `Тарифов: ${initialCount}`}</p></div></div>}
+  <div class="tariff-grid">{ordered.map(product => {const numeric=productNumbers(product);return <div class="tariff-slot" data-tariff data-countries={product.countryCodes.join(',')} data-currency={product.priceCurrency} data-ram={numeric.ramGb ?? ''} data-initial={String(initialIds.has(product.id))} hidden={!initialIds.has(product.id)}><TariffCard product={product} countries={countries}/></div>})}</div>
+  <div class="tariff-empty" data-filter-empty hidden={tariffs.length > 0}><h3>Подберём другую конфигурацию</h3><p>По выбранным параметрам пока нет тарифа в каталоге. Измените фильтры или расскажите нам о задаче.</p><ChatButton label="Помочь с выбором" text="Здравствуйте! Не нашёл подходящую конфигурацию в каталоге. Помогите подобрать тариф."/></div>
+  {filters && <noscript><p class="tariff-noscript">Фильтры работают с JavaScript. Все конфигурации доступны в <a href="/catalog/vps/">каталоге VPS</a>; подобрать страну поможет оператор.</p></noscript>}
+</div>
+<script>
+  import { initCatalogFilters } from '../scripts/catalog-filters';
+  initCatalogFilters();
+</script>

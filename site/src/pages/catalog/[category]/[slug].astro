@@ -4,18 +4,36 @@ import SiteLayout from '../../../layouts/SiteLayout.astro';
 import PageHeading from '../../../components/PageHeading.astro';
 import BodyText from '../../../components/BodyText.astro';
 import ChatButton from '../../../components/ChatButton.astro';
+import OrderButton from '../../../components/OrderButton.astro';
+import CountryFlag from '../../../components/CountryFlag.astro';
+import TariffGrid from '../../../components/TariffGrid.astro';
 import CTABand from '../../../components/CTABand.astro';
-import { categories, availabilityLabels, safeImage, categorySrcSet, formatProductPrice } from '../../../components/catalog';
+import Icon from '../../../components/Icon.astro';
+import { categories, safeImage, categorySrcSet, pricePeriodLabels } from '../../../components/catalog';
 import { getSiteData } from '../../../lib/content';
+import { productSpecs, productCountryList, pricedProducts, domainZone } from '../../../lib/hosting';
 const { products, countries, settings } = await getSiteData(env);
 const product = products.find(product => product.category === Astro.params.category && product.slug === Astro.params.slug);
 if (!product) return Astro.rewrite('/404');
 const category = categories.find(category => category.slug === product.category);
 const image = safeImage(product.image);
-
+const locations = productCountryList(product,countries);
+const specs = productSpecs(product);
+const symbol = ({USD:'$',EUR:'€'} as Record<string,string>)[product.priceCurrency] || '';
+const amount = product.price.replace('.',',').replace(/,00$/,'');
+const period = product.pricePeriod ? pricePeriodLabels[product.pricePeriod] : '';
+const related = pricedProducts(products,product.category).filter(item => item.id !== product.id).slice(0,4);
+const availability = product.availability === 'available' ? 'В наличии' : product.availability === 'soon' ? 'Скоро' : 'Наличие уточняется';
+const zone = domainZone(product);
 ---
 <SiteLayout title={product.title} description={product.summary} settings={settings}>
-  <PageHeading title={product.title} description={product.summary} parent={{href:`/catalog/${product.category}`,label:category?.title || 'Каталог'}}/>
-  <section class="section"><div class="container category-detail"><div>{image && <img class="category-render" src={image} srcset={categorySrcSet(image)} sizes="(max-width: 760px) 100vw, 55vw" width="1600" height="900" loading="lazy" decoding="async" alt={product.title}/>}<BodyText text={product.body}/>{product.countryCodes.length > 0 && <div class="terms"><h2>Размещение</h2><p>{product.countryCodes.map(code => countries.find(country => country.code === code)?.name || code).join(' · ')}</p></div>}</div><aside class="detail-aside"><span class:list={['status',`status-${product.availability}`]}>{availabilityLabels[product.availability]}</span><h2>{formatProductPrice(product,'Цена по запросу')}</h2>{product.priceNote && <p>{product.priceNote}</p>}<p>Уточним конфигурацию, наличие и условия до выставления счёта.</p><ChatButton label={product.availability === 'soon' ? 'Узнать о запуске' : 'Обсудить заказ'} text={`Здравствуйте! Интересует ${product.title}. Подскажите условия.`}/></aside></div></section>
-  <CTABand />
+  <div class="hosting-detail"><PageHeading title={product.title} description={product.summary} parent={{href:`/catalog/${product.category}`,label:category?.title || 'Каталог'}}/>
+  <section class="section"><div class="container"><div class="hosting-detail-layout"><div class="hosting-detail-main">
+  {locations.length > 0 && <><h2 class="detail-section-title">{product.category === 'proxies' ? 'География' : 'Страна размещения'}</h2><div class="hosting-detail-locations">{locations.map(country => <a class="hosting-detail-location" href={`/catalog/${product.category}/#country=${country.code}`}><CountryFlag code={country.code} name={country.name} decorative/>{country.name}</a>)}</div></>}
+  {specs.length > 0 && <><h2 class="detail-section-title">Характеристики</h2><dl class="hosting-detail-specs">{specs.map(spec => <div><dt>{spec.label}</dt><dd>{spec.value}</dd></div>)}</dl></>}
+  {zone && <dl class="hosting-detail-specs"><div><dt>Доменная зона</dt><dd>{zone}</dd></div><div><dt>Период регистрации</dt><dd>Первый год</dd></div><div><dt>Продление</dt><dd>Стоимость по запросу</dd></div><div><dt>Доступность имени</dt><dd>Проверим перед счётом</dd></div></dl>}
+  <h2 class="detail-section-title">Условия заказа</h2><BodyText text={product.body}/>{image && <img class="category-render" src={image} srcset={categorySrcSet(image)} sizes="(max-width:760px) 100vw, 55vw" width="1600" height="900" loading="lazy" decoding="async" alt={product.title}/>}
+  </div><aside class="hosting-detail-aside" aria-label="Стоимость и заказ"><p class:list={['tariff-availability',`tariff-availability-${product.availability}`]}><Icon name={product.availability === 'available' ? 'check' : 'info'}/>{availability}</p><div class="tariff-price"><strong>{product.price ? `${symbol}${amount}` : 'По запросу'}{product.price && !symbol && <small> {product.priceCurrency}</small>}</strong>{product.price && period && <span>/ {period}</span>}{product.price && <span class="tariff-currency">{product.priceCurrency}</span>}</div><p class="tariff-price-note">{product.priceNote || 'Стоимость и условия согласуем в чате'}</p>
+  {product.availability === 'soon' ? <ChatButton label="Узнать о запуске" text={`Здравствуйте! Интересует ${product.title}. Сообщите о запуске.`}/> : <OrderButton product={product} countries={countries} label="Заказать"/>}<p class="detail-checkout-note">Выберите параметры и продолжите в чате. Мы подтвердим наличие и подготовим счёт в нужной криптовалюте и сети.</p><a class="detail-payment-link" href="/payment/">Как проходит оплата</a>
+  </aside></div>{related.length > 0 && <div class="detail-related"><h2>Другие варианты</h2><TariffGrid products={related} countries={countries} id="related-tariffs"/></div>}</div></section></div><CTABand />
 </SiteLayout>

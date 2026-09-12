@@ -1,0 +1,33 @@
+---
+import type { Product, Country } from '../lib/content';
+import { productSpecs, productCountryList, domainZone } from '../lib/hosting';
+import { pricePeriodLabels } from './catalog';
+import CountryFlag from './CountryFlag.astro';
+import OrderButton from './OrderButton.astro';
+import ChatButton from './ChatButton.astro';
+import Icon from './Icon.astro';
+interface Props { product: Product; countries?: Country[]; compact?: boolean; }
+const { product, countries = [], compact = false } = Astro.props;
+const locations = productCountryList(product, countries);
+const specs = productSpecs(product).filter(spec => ['cpu', 'ram', 'disk', 'network'].includes(spec.key));
+const zone = domainZone(product);
+const symbol = ({USD:'$',EUR:'€'} as Record<string,string>)[product.priceCurrency] || '';
+const amount = product.price.replace('.', ',').replace(/,00$/, '');
+const period = product.pricePeriod ? pricePeriodLabels[product.pricePeriod] : '';
+const specIcons: Record<string,string> = {cpu:'cpu',ram:'memory',disk:'drive',network:'network'};
+const availability = product.availability === 'available' ? 'В наличии' : product.availability === 'soon' ? 'Скоро' : 'Наличие уточняется';
+const href = `/catalog/${product.category}/${product.slug}`;
+---
+<article class:list={['tariff-card', `tariff-${product.category}`, { 'tariff-compact': compact, 'tariff-domain': zone, 'tariff-soon': product.availability === 'soon' }]}>
+  <div class="tariff-location">
+    {zone ? <><Icon name="globe"/><span>Доменная зона</span></> : locations.length ? <><span class="tariff-flags">{locations.slice(0,3).map(country => <CountryFlag code={country.code} name={country.name} decorative />)}</span><span>{locations.length === 1 ? locations[0].name : `${locations.length} стран`}</span></> : <><Icon name="globe"/><span>Локация по запросу</span></>}
+  </div>
+  <h3><a href={href}>{zone || product.title}</a></h3>
+  <div class="tariff-price"><strong>{symbol}{amount}{!symbol && <small> {product.priceCurrency}</small>}</strong>{period && <span>/ {period}</span>}<span class="tariff-currency">{product.priceCurrency}</span></div>
+  <p class="tariff-price-note">{product.priceNote || 'Стоимость и условия подтвердим перед счётом'}</p>
+  {specs.length ? <dl class="tariff-specs">{specs.map(spec => <div><dt><Icon name={specIcons[spec.key]}/><span>{spec.label}</span></dt><dd>{spec.value.replace(/ RAM$/, '')}</dd></div>)}</dl> : zone ? <ul class="tariff-domain-notes"><li><Icon name="check"/>Регистрация на 1 год</li><li><Icon name="check"/>Оплата криптовалютой</li><li><Icon name="info"/>Продление — по запросу</li></ul> : <p class="tariff-summary">{product.summary}</p>}
+  <div class="tariff-card-bottom"><p class:list={['tariff-availability', `tariff-availability-${product.availability}`]}><Icon name={product.availability === 'available' ? 'check' : 'info'}/>{availability}</p>
+    {product.availability === 'soon' ? <ChatButton label="Узнать о запуске" variant="secondary" text={`Здравствуйте! Интересует ${product.title}. Сообщите, пожалуйста, о запуске.`}/> : <OrderButton product={product} countries={countries} label="Заказать" variant="primary" class="tariff-order"/>}
+    <a class="tariff-details" href={href} aria-label={`Подробнее: ${product.title}`}>Подробнее<Icon name="arrow"/></a>
+  </div>
+</article>

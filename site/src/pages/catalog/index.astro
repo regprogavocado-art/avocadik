@@ -2,16 +2,23 @@
 import { env } from 'cloudflare:workers';
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import PageHeading from '../../components/PageHeading.astro';
-import CategoryList from '../../components/CategoryList.astro';
 import CTABand from '../../components/CTABand.astro';
 import BodyText from '../../components/BodyText.astro';
+import ChatButton from '../../components/ChatButton.astro';
+import Icon from '../../components/Icon.astro';
+import { categories, formatProductPrice } from '../../components/catalog';
+import { categoryPriceGroups, pricedProducts } from '../../lib/hosting';
 import { getSiteData } from '../../lib/content';
 const { pages, products, settings } = await getSiteData(env);
 const page = pages.find(page => page.slug === 'catalog');
 if (!page) return Astro.rewrite('/404');
+const directions = categories.filter(category => category.slug !== 'bulletproof' && pages.some(page => page.slug === `category-${category.slug}`));
+const upcoming = pages.some(page => page.slug === 'category-bulletproof');
 ---
-<SiteLayout title={page?.title || 'Каталог'} description={page?.summary} settings={settings}>
-  <PageHeading title={page?.title || 'Каталог'} description={page?.summary || 'Инфраструктура под ваш проект. Выберите направление — детали, наличие и стоимость обсудим в чате.'}/>
-  <section class="section"><div class="container"><CategoryList pages={pages} products={products}/>{page?.body && <div class="terms"><BodyText text={page.body}/></div>}</div></section>
-  <CTABand title="Подберём то,\nчто нужно проекту." />
+<SiteLayout title={page.title} description={page.summary} settings={settings}>
+  <div class="hosting-category"><PageHeading title={page.title} description={page.summary}/>
+  <section class="section"><div class="container"><div class="catalog-offers">{directions.map(category => {const minimums=categoryPriceGroups(products,category.slug); const count=pricedProducts(products,category.slug).length; return <article class="catalog-offer"><div class="catalog-offer-head"><Icon name={category.icon}/><h2>{category.title}</h2></div><p>{category.description}</p><div class="catalog-offer-prices">{minimums.length ? minimums.map(product => <span>от {formatProductPrice(product)}<small>{product.category === 'proxies' ? ' за 1 IP' : product.category === 'domains' ? ' за первый год' : ''}</small></span>) : <span>По запросу</span>}</div><p class="catalog-offer-note">{count ? `${count} вариантов в каталоге. ` : ''}Цены ориентировочные, наличие уточняется.</p><a class="button button-primary" href={`/catalog/${category.slug}/`}>Выбрать {category.slug === 'domains' ? 'домен' : category.slug === 'proxies' ? 'прокси' : category.slug === 'dedicated' ? 'сервер' : 'VPS'}<Icon name="arrow"/></a></article>})}</div>
+  {upcoming && <article class="catalog-upcoming"><Icon name="shield"/><div><h2>Bulletproof-хостинг <span class="status status-soon">Скоро</span></h2><p>Готовим направление абузоустойчивого размещения. Конфигурации и условия появятся после запуска.</p></div><ChatButton variant="secondary" label="Узнать о запуске" text="Здравствуйте! Интересует запуск Bulletproof-хостинга Avocado."/></article>}
+  <div class="catalog-information"><div><h2>От выбора до запуска</h2>{page.body && <BodyText text={page.body}/>}<ol class="catalog-order-steps"><li><span>01</span><strong>Выберите услугу</strong><p>Сравните ресурсы, цену и страну. В карточке нажмите «Заказать».</p></li><li><span>02</span><strong>Согласуйте детали</strong><p>Мы получим параметры заявки в чате и подтвердим наличие.</p></li><li><span>03</span><strong>Оплатите криптовалютой</strong><p>Получите счёт в нужной сети. После подтверждения оплаты согласуем выдачу.</p></li></ol></div><aside class="catalog-help"><h3>Подберём инфраструктуру</h3><p>Опишите проект и нагрузку. Поможем определить ресурсы, страну и бюджет.</p><ChatButton label="Помочь с выбором" text="Здравствуйте! Помогите подобрать инфраструктуру для проекта."/></aside></div>
+  </div></section></div><CTABand />
 </SiteLayout>

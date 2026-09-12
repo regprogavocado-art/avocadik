@@ -1,12 +1,15 @@
 ---
 import siteCss from '../styles/site.css?raw';
 import brandCss from '../styles/brand.css?raw';
+import hostingHomeCss from '../styles/hosting-home.css?raw';
+import hostingCatalogCss from '../styles/hosting-catalog.css?raw';
 import fontsCss from '../../../css/fonts.css?raw';
 import chatCss from '../../../css/chat.css?raw';
 import Icons from '../components/Icons.astro';
 import Icon from '../components/Icon.astro';
 import ChatButton from '../components/ChatButton.astro';
 import Brand from '../components/Brand.astro';
+import OrderDialog from '../components/OrderDialog.astro';
 interface Props {
   title?: string;
   description?: string;
@@ -14,16 +17,16 @@ interface Props {
   noindex?: boolean;
   hero?: boolean;
 }
-const { title = 'Разработка ПО и автоматизация', description = 'Avocado — разработчики программного обеспечения. Hass, Ettinger и решения под вашу задачу. Инфраструктура в дополнение к ПО, без KYC, с оплатой криптовалютой.', settings = {}, noindex = false, hero = false } = Astro.props;
+const { title = 'Анонимный хостинг и решения ПО', description = 'VPS, выделенные серверы, домены и прокси от Avocado. Без KYC и проверки документов, с оплатой криптовалютой. Собственные решения для защиты и автоматизации.', settings = {}, noindex = false, hero = false } = Astro.props;
 const pageTitle = `${title} — Avocado`;
 const base = import.meta.env.PUBLIC_SITE_URL || Astro.site?.toString() || Astro.url.origin;
 const canonical = new URL(Astro.url.pathname, base).href;
 const ogImage = new URL('/assets/og.png', Astro.url.origin).href;
-const navItems = [ ['/software', 'Разработка ПО'], ['/hass', 'Hass'], ['/ettinger', 'Ettinger'], ['/catalog', 'Услуги'], ['/news', 'Новости'] ];
+const navItems = [ ['/catalog/vps', 'VPS'], ['/catalog/dedicated', 'Серверы'], ['/catalog/domains', 'Домены'], ['/catalog/proxies', 'Прокси'], ['/countries', 'Страны'] ];
 const active = (href: string) => Astro.url.pathname === href || Astro.url.pathname.startsWith(`${href}/`);
 const telegramUrl = /^https:\/\/t\.me\/[a-zA-Z0-9_/?=&%-]+$/.test(settings.telegramUrl || '') ? settings.telegramUrl! : 'https://t.me/avogurubot';
 const configJson = JSON.stringify({ telegramUrl, chat: { title: 'Avocado', subtitle: 'На связи с вашим проектом', welcome: 'Здравствуйте! Расскажите о задаче — ответим прямо здесь. Оставьте Telegram или почту, чтобы продолжить разговор, если закроете сайт.' } }).replace(/</g, '\\u003c');
-const criticalStyles = fontsCss.replaceAll('../assets/fonts/', '/assets/fonts/') + '\n' + chatCss + '\n' + siteCss + '\n' + brandCss;
+const criticalStyles = fontsCss.replaceAll('../assets/fonts/', '/assets/fonts/') + '\n' + chatCss + '\n' + siteCss + '\n' + brandCss + '\n' + hostingHomeCss + '\n' + hostingCatalogCss;
 ---
 <!doctype html>
 <html lang="ru">
@@ -59,16 +62,17 @@ const criticalStyles = fontsCss.replaceAll('../assets/fonts/', '/assets/fonts/')
     <header class="site-header" id="header">
       <div class="header-inner container">
         <Brand />
-        <nav class="desktop-nav" aria-label="Главная навигация">{navItems.map(([href,label]) => <a href={href} aria-current={active(href) ? 'page' : undefined}>{label}</a>)}</nav>
-        <div class="header-actions"><ChatButton variant="secondary" label="Связаться" /><button id="menu-toggle" class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label="Открыть меню"><Icon name="menu" /></button></div>
+        <nav class="desktop-nav" aria-label="Главная навигация">{navItems.map(([href,label]) => <a href={href} aria-current={active(href) ? 'page' : undefined}>{label}</a>)}<details class="nav-software"><summary>Решения ПО</summary><div class="nav-software-menu"><a href="/hass" aria-current={active('/hass') ? 'page' : undefined}>Avocado Hass<small>Защита и контроль трафика</small></a><a href="/ettinger" aria-current={active('/ettinger') ? 'page' : undefined}>Avocado Ettinger<small>Автоматизация инфраструктуры</small></a></div></details></nav>
+        <div class="header-actions"><ChatButton variant="secondary" label="Написать нам" /><button id="menu-toggle" class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label="Открыть меню"><Icon name="menu" /></button></div>
       </div>
-      <nav id="mobile-nav" class="mobile-nav" aria-label="Мобильная навигация" hidden>{[...navItems,['/rent','Аренда панели'],['/countries','Страны'],['/payment','Оплата'],['/contacts','Контакты']].map(([href,label]) => <a href={href} aria-current={active(href) ? 'page' : undefined}>{label}<Icon name="arrow" /></a>)}</nav>
+      <nav id="mobile-nav" class="mobile-nav" aria-label="Мобильная навигация" hidden>{[...navItems,['/hass','Avocado Hass'],['/ettinger','Avocado Ettinger'],['/rent','Аренда панели'],['/software','Разработка ПО'],['/payment','Оплата'],['/news','Новости'],['/contacts','Контакты']].map(([href,label]) => <a href={href} aria-current={active(href) ? 'page' : undefined}>{label}<Icon name="arrow" /></a>)}</nav>
     </header>
     <main id="main" tabindex="-1"><slot /></main>
-    <footer class="site-footer container">
-      <div class="footer-top"><div class="footer-brand"><Brand/><p>Собственное ПО.<br/>Защита и автоматизация.</p></div><div class="footer-links"><div><h2>Наше ПО</h2><a href="/software">Заказная разработка</a><a href="/hass">Avocado Hass</a><a href="/ettinger">Avocado Ettinger</a><a href="/rent">Аренда панели</a></div><div><h2>Сервисы и информация</h2><a href="/catalog">Дополнительные услуги</a><a href="/countries">Страны</a><a href="/payment">Оплата криптовалютой</a><a href="/news">Новости</a><a href="/contacts">Контакты</a></div><div><h2>Обсудим проект</h2><button class="footer-chat" type="button" data-chat="">Написать в чат <Icon name="arrow" /></button><a href={telegramUrl} target="_blank" rel="noopener noreferrer">Telegram <Icon name="telegram" /></a>{settings.email && <a href={`mailto:${settings.email}`}>{settings.email}</a>}</div></div></div>
-      <div class="footer-bottom"><span>© {new Date().getFullYear()} Avocado</span><span>Больше возможностей сегодня.</span></div>
+    <footer class="site-footer container hosting-footer">
+      <div class="footer-top"><div class="footer-brand"><Brand/><p>Инфраструктура под вашим контролем.<br/>Без KYC. С оплатой криптовалютой.</p><button class="footer-chat" type="button" data-chat="">Написать в чат <Icon name="arrow" /></button><a href={telegramUrl} target="_blank" rel="noopener noreferrer">Telegram <Icon name="telegram" /></a>{settings.email && <a href={`mailto:${settings.email}`}>{settings.email}</a>}</div><div class="footer-links"><div><h2>Инфраструктура</h2><a href="/catalog/vps">VPS-серверы</a><a href="/catalog/dedicated">Выделенные серверы</a><a href="/catalog/domains">Домены</a><a href="/catalog/proxies">Прокси</a><a href="/catalog/bulletproof">Bulletproof · скоро</a></div><div><h2>Решения ПО</h2><a href="/hass">Avocado Hass</a><a href="/ettinger">Avocado Ettinger</a><a href="/rent">Аренда панели</a><a href="/software">Заказная разработка</a></div><div><h2>Информация</h2><a href="/countries">Страны</a><a href="/payment">Оплата</a><a href="/news">Новости</a><a href="/contacts">Контакты</a></div></div></div>
+      <div class="footer-bottom"><span>© {new Date().getFullYear()} Avocado</span><span>Без KYC · Оплата криптовалютой</span></div>
     </footer>
+    <OrderDialog />
     <script is:inline type="application/json" id="avocado-config" set:html={configJson} />
     <script is:inline>window.AVOCADO_CONFIG = JSON.parse(document.getElementById('avocado-config').textContent); window.AVOCADO_CONFIG.chatApiBase = window.location.origin;</script>
     <script is:inline src="/js/chat.js" defer></script>
