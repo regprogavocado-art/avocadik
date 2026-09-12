@@ -167,8 +167,7 @@ svg { display: block; }
 .hero-avocado {
   position: absolute; z-index: 3;
   width: clamp(260px, 26vw, 380px); height: auto;
-  left: 50%; bottom: 8%; transform: translateX(-50%);
-  filter: drop-shadow(0 30px 40px rgba(0, 0, 0, .55));
+  left: 50%; bottom: 2%; transform: translateX(-50%);
 }
 /* свечение косточки: только opacity/transform — рисуется на композиторе, без перерисовки SVG */
 .hero-avocado .seed-glow { animation: seed-breathe 5.5s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
@@ -433,7 +432,7 @@ svg { display: block; }
     border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--line);
   }
   .hero-visual::before { background: linear-gradient(180deg, rgba(8, 10, 9, 0) 70%, rgba(8, 10, 9, .6) 100%); }
-  .hero-avocado { width: 200px; bottom: 6%; }
+  .hero-avocado { width: 210px; bottom: 0; }
   .hero-halo { width: 420px; height: 420px; }
   .hero-poster { right: 16px; top: 16px; width: 168px; padding: 16px; }
   .hero-poster p { font-size: 10px; letter-spacing: .24em; }
