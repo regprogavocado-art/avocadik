@@ -1,0 +1,37 @@
+# Avocado chat bridge — Cloudflare Worker
+# Деплой: npm run deploy   (см. ../README.md, раздел «Чат»)
+
+name = "avocado-chat"
+main = "src/index.js"
+compatibility_date = "2025-06-01"
+workers_dev = true
+
+[observability]
+enabled = true
+
+# Напоминания о чатах без ответа (бесплатный тариф поддерживает Cron Triggers)
+[triggers]
+crons = ["*/15 * * * *"]
+
+[vars]
+# Откуда виджету разрешено обращаться к API (через запятую, без слэша в конце)
+ALLOWED_ORIGINS = "https://avocado.rest,https://www.avocado.rest,https://regprogavocado-art.github.io,http://localhost:8000,http://127.0.0.1:8000"
+# Только для группы с темами: id темы, куда слать уведомления
+# ADMIN_THREAD_ID = "12"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "avocado-chat"
+# ↓ заменить на database_id из вывода `npm run d1:create`
+database_id = "00000000-0000-0000-0000-000000000000"
+
+# Секреты задаются командой `npx wrangler secret put <NAME>`:
+#   TELEGRAM_BOT_TOKEN — токен бота от @BotFather
+#   ADMIN_CHAT_ID      — chat_id оператора (бот подскажет его по /start)
+#   WEBHOOK_SECRET     — только A-Z a-z 0-9 _ - (требование Telegram), 16+ символов
+#   IP_SALT            — любая случайная строка для хеширования IP (менять не нужно)
+#
+# Свой домен для API (опционально, если DNS avocado.rest на Cloudflare):
+# [[routes]]
+# pattern = "chat.avocado.rest"
+# custom_domain = true

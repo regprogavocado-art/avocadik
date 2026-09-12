@@ -1,0 +1,10 @@
+# Локальная разработка: скопировать в .dev.vars (файл в .gitignore)
+# Для прод-окружения эти же значения задаются через `npx wrangler secret put <NAME>`
+
+TELEGRAM_BOT_TOKEN=123456789:AA...        # токен от @BotFather
+ADMIN_CHAT_ID=123456789                   # ваш chat_id (бот пришлёт его в ответ на /start)
+WEBHOOK_SECRET=replace-with-random-hex    # только A-Z a-z 0-9 _ -, 16+ символов
+IP_SALT=any-random-string                 # соль для хеширования IP
+
+# Только для локальных тестов без реального Telegram (см. scripts/mock-telegram.mjs):
+# TELEGRAM_API_BASE=http://127.0.0.1:8099

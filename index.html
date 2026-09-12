@@ -2,220 +2,511 @@
 <html lang="ru">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>NEGRA — закрытый форум. Открытие скоро.</title>
-  <meta name="description" content="NEGRA — закрытый форум старой школы. Треды, люди, репутация. Никаких алгоритмов. Предрегистрация открыта: первые получают низкий номер и бейдж основателя.">
-  <meta name="theme-color" content="#050505">
-  <meta property="og:title" content="NEGRA — закрытый форум. Открытие скоро.">
-  <meta property="og:description" content="Тёмная сторона интернета. Та, где ещё интересно. Займи низкий номер до открытия шлюзов.">
-  <meta property="og:image" content="assets/img/poster.png">
+  <script>document.documentElement.classList.add('js')</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content">
+  <title>Avocado — защита и автоматизация инфраструктуры</title>
+  <meta name="description" content="Защита от DDoS и блокировок РКН, массовая закупка доменов и серверов, ИИ-адаптеры, автоматизация NIC.RU. Аренда панели на нужный срок, цена по запросу. Напишите — ответим в чате.">
+  <meta name="theme-color" content="#080a09">
+  <meta name="color-scheme" content="dark">
+  <meta property="og:title" content="Avocado — инфраструктура без ограничений">
+  <meta property="og:description" content="Защита от DDoS и блокировок РКН, массовая закупка доменов и серверов, ИИ-адаптеры, автоматизация NIC.RU. Всё в одной экосистеме.">
   <meta property="og:type" content="website">
-  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <meta property="og:url" content="https://avocado.rest/">
+  <meta property="og:site_name" content="Avocado">
+  <meta property="og:image" content="https://avocado.rest/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Avocado — экосистема для защиты, автоматизации и масштабирования инфраструктуры">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Avocado — инфраструктура без ограничений">
+  <meta name="twitter:description" content="Защита от DDoS и блокировок РКН, массовая закупка доменов и серверов, ИИ-адаптеры. Всё в одной экосистеме.">
+  <meta name="twitter:image" content="https://avocado.rest/assets/og.png">
+  <link rel="canonical" href="https://avocado.rest/">
+  <link rel="icon" href="/favicon.ico" sizes="32x32">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="preload" href="assets/fonts/manrope-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/manrope-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="css/fonts.css">
-  <link rel="stylesheet" href="css/main.css">
-  <link rel="stylesheet" href="css/boot.css">
-  <link rel="stylesheet" href="css/effects.css">
-  <script type="importmap">
-  {
-    "imports": {
-      "three": "./vendor/three/three.module.min.js",
-      "three/addons/": "./vendor/three/addons/"
-    }
-  }
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/chat.css">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@graph":[
+    {"@type":"Organization","@id":"https://avocado.rest/#org","name":"Avocado","url":"https://avocado.rest/","logo":"https://avocado.rest/assets/icons/icon-512.png"},
+    {"@type":"WebSite","@id":"https://avocado.rest/#site","url":"https://avocado.rest/","name":"Avocado","inLanguage":"ru","publisher":{"@id":"https://avocado.rest/#org"}},
+    {"@type":"Product","name":"Avocado Hass","url":"https://avocado.rest/#products","description":"Защита трафика: анти-DDoS, защита от блокировок РКН, стабильность сервисов.","brand":{"@id":"https://avocado.rest/#org"}},
+    {"@type":"Product","name":"Avocado Ettinger","url":"https://avocado.rest/#products","description":"Массовая закупка доменов и серверов, ИИ-адаптеры, автоматизация NIC.RU, регистрация и верификация аккаунтов.","brand":{"@id":"https://avocado.rest/#org"}}
+  ]}
   </script>
 </head>
 <body>
 
-  <!-- BOOT: прелоадер-«взлом» (чистый DOM, рисуется до загрузки three) -->
-  <div id="boot" aria-label="Загрузка">
-    <div class="boot-log"></div>
-    <div class="boot-final">
-      <div class="boot-granted">ACCESS GRANTED</div>
-      <button class="boot-enter" type="button">[ НАЖМИ, ЧТОБЫ ВОЙТИ ]</button>
-      <a class="boot-nosound" href="#">войти без звука</a>
-      <div class="boot-hint">нажми любую клавишу, если не терпится</div>
+<!-- ─── Иконки (спрайт) ─────────────────────────────────────────────── -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <radialGradient id="g-seed" cx="38%" cy="32%" r="68%">
+      <stop offset="0" stop-color="#ffe9b5"/>
+      <stop offset=".45" stop-color="#e8b95e"/>
+      <stop offset=".85" stop-color="#9a6421"/>
+      <stop offset="1" stop-color="#5a3810"/>
+    </radialGradient>
+    <linearGradient id="g-rim" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#8ff0a6" stop-opacity=".9"/>
+      <stop offset=".6" stop-color="#8ff0a6" stop-opacity=".25"/>
+      <stop offset="1" stop-color="#e3b45c" stop-opacity=".9"/>
+    </linearGradient>
+    <radialGradient id="g-skin" cx="35%" cy="22%" r="85%"><stop offset="0" stop-color="#1d2b23"/><stop offset=".5" stop-color="#0a0f0c"/><stop offset="1" stop-color="#030404"/></radialGradient>
+    <radialGradient id="g-cavity" cx="50%" cy="70%" r="62%"><stop offset="0" stop-color="#55764f"/><stop offset=".4" stop-color="#2c4531"/><stop offset="1" stop-color="#111a14"/></radialGradient>
+    <linearGradient id="g-mt-far" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b3d2e"/><stop offset="1" stop-color="#101a13"/></linearGradient>
+    <linearGradient id="g-mt-mid" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#19281d"/><stop offset="1" stop-color="#0b120e"/></linearGradient>
+    <linearGradient id="g-lake" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#17251c"/><stop offset="1" stop-color="#070a08"/></linearGradient>
+    <linearGradient id="g-dusk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e3b45c" stop-opacity="0"/><stop offset=".7" stop-color="#e3b45c" stop-opacity=".16"/><stop offset="1" stop-color="#e3b45c" stop-opacity="0"/></linearGradient>
+    <clipPath id="c-skin"><path d="M200 30c-50 0-75 65-82 130-8 70-78 110-78 180 0 90 75 120 160 120s160-30 160-120c0-70-70-110-78-180C275 95 250 30 200 30z"/></clipPath>
+    <clipPath id="c-flesh"><path d="M200 60c-35 0-52 52-58 108-7 64-67 100-67 167 0 73 60 97 125 97s125-24 125-97c0-67-60-103-67-167-6-56-23-108-58-108z"/></clipPath>
+    <radialGradient id="g-spill" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#f2c56a" stop-opacity=".55"/>
+      <stop offset=".5" stop-color="#e3b45c" stop-opacity=".18"/>
+      <stop offset="1" stop-color="#e3b45c" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="g-halo" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#f0c168" stop-opacity=".5"/>
+      <stop offset=".4" stop-color="#d9a14a" stop-opacity=".16"/>
+      <stop offset="1" stop-color="#d9a14a" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="g-area-blue" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5c8dff" stop-opacity=".45"/>
+      <stop offset="1" stop-color="#5c8dff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="g-area-orange" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f59e4b" stop-opacity=".4"/>
+      <stop offset="1" stop-color="#f59e4b" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="g-bar" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#a78bfa"/>
+      <stop offset="1" stop-color="#3b5bdb"/>
+    </linearGradient>
+    <pattern id="p-dots" width="7" height="7" patternUnits="userSpaceOnUse">
+      <circle cx="1.5" cy="1.5" r="1.1" fill="#dfe7e1" fill-opacity=".22"/>
+    </pattern>
+    <filter id="f-blur" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="18"/></filter>
+    <filter id="f-blur-md" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="9"/></filter>
+    <filter id="f-blur-sm" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4"/></filter>
+
+    <!-- логотип -->
+    <symbol id="i-avocado" viewBox="0 0 64 64">
+      <path d="M32 6c-6.5 0-9.5 7-10.5 14.5C20.3 29 11 33 11 43c0 10 9.5 16 21 16s21-6 21-16c0-10-9.3-14-10.5-22.5C41.5 13 38.5 6 32 6z" fill="#101712" stroke="url(#g-rim)" stroke-width="2.2"/>
+      <path d="M32 13c-4 0-6 5.5-7 11.5C24 32 17 35 17 42.5 17 50 24 54 32 54s15-4 15-11.5C47 35 40 32 39 24.5 38 18.5 36 13 32 13z" fill="#1e2d22"/>
+      <circle cx="32" cy="42" r="8.5" fill="url(#g-seed)"/>
+    </symbol>
+
+    <!-- линейные иконки, 24×24, stroke=currentColor -->
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 2.6v5.2c0 4.6-3 8.3-7 10.2-4-1.9-7-5.6-7-10.2V5.6L12 3z"/></symbol>
+    <symbol id="i-shield-check" viewBox="0 0 24 24"><path d="M12 3l7 2.6v5.2c0 4.6-3 8.3-7 10.2-4-1.9-7-5.6-7-10.2V5.6L12 3z"/><path d="M9 12l2.2 2.2L15.5 10"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.8 3.9 5.8 3.9 9s-1.3 6.2-3.9 9c-2.6-2.8-3.9-5.8-3.9-9S9.4 5.8 12 3z"/></symbol>
+    <symbol id="i-headset" viewBox="0 0 24 24"><path d="M4 14v-2a8 8 0 0116 0v2"/><rect x="3" y="13" width="4" height="6" rx="1.5"/><rect x="17" y="13" width="4" height="6" rx="1.5"/><path d="M19 19v1a2 2 0 01-2 2h-4"/></symbol>
+    <symbol id="i-check-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.2l2.3 2.3 4.7-4.8"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-eco" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="5" cy="6" r="2"/><circle cx="19" cy="6" r="2"/><circle cx="5" cy="18" r="2"/><circle cx="19" cy="18" r="2"/><path d="M9.8 10.2L6.5 7.5M14.2 10.2l3.3-2.7M9.8 13.8l-3.3 2.7M14.2 13.8l3.3 2.7"/></symbol>
+    <symbol id="i-brain" viewBox="0 0 24 24"><path d="M11 3l1.9 5.6L18.5 10.5l-5.6 1.9L11 18l-1.9-5.6L3.5 10.5l5.6-1.9L11 3z"/><path d="M18.5 15l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8.8-2.2z"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3.5l8.5 4.5L12 12.5 3.5 8 12 3.5z"/><path d="M3.5 12l8.5 4.5 8.5-4.5M3.5 16l8.5 4.5 8.5-4.5"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20h16"/><rect x="5" y="11" width="3.5" height="7" rx=".8"/><rect x="10.25" y="6" width="3.5" height="12" rx=".8"/><rect x="15.5" y="9" width="3.5" height="9" rx=".8"/></symbol>
+    <symbol id="i-server" viewBox="0 0 24 24"><rect x="3.5" y="4" width="17" height="6.5" rx="1.8"/><rect x="3.5" y="13.5" width="17" height="6.5" rx="1.8"/><path d="M7 7.25h.01M7 16.75h.01"/></symbol>
+    <symbol id="i-cpu" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/><path d="M9 2.5v3.5M15 2.5V6M9 18v3.5M15 18v3.5M2.5 9H6M2.5 15H6M18 9h3.5M18 15h3.5"/></symbol>
+    <symbol id="i-cart" viewBox="0 0 24 24"><path d="M3 4h2.2l2.3 10.5h10.2L20 7.5H6.4"/><circle cx="9" cy="19" r="1.4"/><circle cx="16.5" cy="19" r="1.4"/></symbol>
+    <symbol id="i-user-plus" viewBox="0 0 24 24"><circle cx="10" cy="8" r="3.6"/><path d="M3.5 20c.5-3.5 3.2-5.5 6.5-5.5 1.3 0 2.5.3 3.5.9M18 14v6M15 17h6"/></symbol>
+    <symbol id="i-badge-check" viewBox="0 0 24 24"><path d="M12 2.8l2.1 1.6 2.6-.3 1 2.4 2.4 1-.3 2.6 1.6 2.1-1.6 2.1.3 2.6-2.4 1-1 2.4-2.6-.3-2.1 1.6-2.1-1.6-2.6.3-1-2.4-2.4-1 .3-2.6L2.8 12l1.6-2.1-.3-2.6 2.4-1 1-2.4 2.6.3L12 2.8z"/><path d="M9 12.2l2.2 2.2 4-4.2"/></symbol>
+    <symbol id="i-trend" viewBox="0 0 24 24"><path d="M3.5 17.5l5.5-6 4 3.5 7.5-8"/><path d="M15.5 7h5v5"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+    <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2.5L5 13.5h6l-1 8 8-11h-6l1-8z"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V8a4 4 0 018 0v2.5"/></symbol>
+    <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 6.5A2.5 2.5 0 016.5 4h11A2.5 2.5 0 0120 6.5v7a2.5 2.5 0 01-2.5 2.5H10l-4.5 4v-4A2.5 2.5 0 014 13.5v-7z"/><path d="M8.5 9h7M8.5 12.5h4.5"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="M4 12l16-8-4 16-4.5-6L4 12z"/><path d="M11.5 14L20 4"/></symbol>
+    <symbol id="i-telegram" viewBox="0 0 24 24"><path d="M21 4.5L3.5 11.2c-.9.4-.9 1 0 1.3l4.4 1.4 1.7 5.3c.2.6.5.7 1 .3l2.5-2.1 4.6 3.4c.8.5 1.4.2 1.6-.8L22 6c.3-1.2-.3-1.8-1-1.5z" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-youtube" viewBox="0 0 24 24"><path d="M21.6 7.2a2.6 2.6 0 00-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.6 2.6 0 002.4 7.2C2 8.8 2 12 2 12s0 3.2.4 4.8a2.6 2.6 0 001.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.6 2.6 0 001.8-1.8c.4-1.6.4-4.8.4-4.8s0-3.2-.4-4.8zM10 15V9l5.2 3L10 15z" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-linkedin" viewBox="0 0 24 24"><path d="M4.5 3.5a1.9 1.9 0 110 3.8 1.9 1.9 0 010-3.8zM3 9h3v11H3V9zm5.5 0h2.9v1.5c.4-.8 1.5-1.8 3.2-1.8 3.4 0 4 2.2 4 5.1V20h-3v-5.4c0-1.3 0-3-1.8-3s-2.1 1.4-2.1 2.9V20h-3V9z" fill="currentColor" stroke="none"/></symbol>
+  </defs>
+</svg>
+
+<!-- ─── Шапка ───────────────────────────────────────────────────────── -->
+<header class="site-header" id="header">
+  <div class="container header-inner">
+    <a class="brand" href="#top" aria-label="Avocado — на главную">
+      <svg class="brand-mark" width="40" height="40" aria-hidden="true"><use href="#i-avocado"/></svg>
+      <span class="brand-text"><b>Avocado</b><small>avocado.rest</small></span>
+    </a>
+    <nav class="nav" id="nav" aria-label="Основная навигация">
+      <a href="#products">Продукты</a>
+      <a href="#why">Решения</a>
+      <a href="#how">Возможности</a>
+      <a href="#pricing">Аренда</a>
+      <a href="#contact">Контакты</a>
+      <div class="nav-actions">
+        <button class="btn btn-ghost" type="button" data-chat="Здравствуйте! Хочу посмотреть демо Avocado. Когда удобно провести?">Запросить демо</button>
+        <button class="btn btn-primary" type="button" data-chat="">Связаться</button>
+      </div>
+    </nav>
+    <div class="header-actions">
+      <button class="btn btn-ghost" type="button" data-chat="Здравствуйте! Хочу посмотреть демо Avocado. Когда удобно провести?">Запросить демо</button>
+      <button class="btn btn-primary" type="button" data-chat="">Связаться</button>
+      <button class="nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="nav" aria-label="Открыть меню">
+        <svg class="ic ic-menu" aria-hidden="true"><use href="#i-menu"/></svg>
+        <svg class="ic ic-close" aria-hidden="true"><use href="#i-close"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ─── Hero ────────────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-visual" aria-hidden="true">
+    <div class="hero-sky"></div>
+    <svg class="hero-mountains" viewBox="0 0 900 420" preserveAspectRatio="xMidYMax slice">
+      <rect x="0" y="150" width="900" height="200" fill="url(#g-dusk)"/>
+      <path class="mt mt-far" d="M0 250L70 195l55 30 75-70 70 55 65-45 70 50 80-65 60 45 80-35 70 40 65-28 80 40v168H0z"/>
+      <path class="mt mt-mid" d="M0 300l90-55 60 35 80-60 75 45 70-30 80 50 70-40 90 45 75-25 70 35 70-20v200H0z"/>
+      <path class="mt mt-near" d="M0 345l110-45 70 30 90-40 95 35 80-20 95 40 100-30 90 25 90-15 80 30v70H0z"/>
+      <rect class="lake" x="0" y="345" width="900" height="75"/>
+      <ellipse cx="450" cy="352" rx="150" ry="4" fill="#e3b45c" fill-opacity=".22" filter="url(#f-blur-sm)"/>
+      <g stroke="#e3b45c" stroke-opacity=".12" stroke-linecap="round"><path d="M340 372h220"/><path d="M370 388h160"/><path d="M400 404h100"/></g>
+    </svg>
+    <svg class="hero-halo" viewBox="0 0 600 600"><circle cx="300" cy="300" r="300" fill="url(#g-halo)"/></svg>
+    <svg class="hero-avocado" viewBox="0 0 400 480">
+      <ellipse cx="200" cy="458" rx="150" ry="14" fill="#000" fill-opacity=".7" filter="url(#f-blur)"/>
+      <ellipse cx="200" cy="466" rx="90" ry="7" fill="#f2c56a" fill-opacity=".4" filter="url(#f-blur-sm)"/>
+      <path d="M200 30c-50 0-75 65-82 130-8 70-78 110-78 180 0 90 75 120 160 120s160-30 160-120c0-70-70-110-78-180C275 95 250 30 200 30z" fill="url(#g-skin)" stroke="url(#g-rim)" stroke-width="2"/>
+      <g clip-path="url(#c-skin)"><ellipse cx="128" cy="215" rx="16" ry="120" transform="rotate(14 128 215)" fill="#dfe9df" fill-opacity=".16" filter="url(#f-blur-md)"/></g>
+      <path d="M200 60c-35 0-52 52-58 108-7 64-67 100-67 167 0 73 60 97 125 97s125-24 125-97c0-67-60-103-67-167-6-56-23-108-58-108z" fill="url(#g-cavity)"/>
+      <g clip-path="url(#c-flesh)"><path d="M200 60c-35 0-52 52-58 108-7 64-67 100-67 167 0 73 60 97 125 97s125-24 125-97c0-67-60-103-67-167-6-56-23-108-58-108z" fill="none" stroke="#000" stroke-opacity=".6" stroke-width="34" filter="url(#f-blur-md)"/></g>
+      <circle class="seed-glow" cx="200" cy="330" r="118" fill="url(#g-spill)"/>
+      <ellipse cx="208" cy="374" rx="60" ry="24" fill="#000" fill-opacity=".55" filter="url(#f-blur-sm)"/>
+      <circle cx="200" cy="330" r="62" fill="url(#g-seed)"/>
+      <path d="M254 299a62 62 0 0 1-33 89" fill="none" stroke="#ffe9b5" stroke-opacity=".45" stroke-width="3" stroke-linecap="round" filter="url(#f-blur-sm)"/>
+      <ellipse cx="180" cy="304" rx="18" ry="10" fill="#fff4d6" fill-opacity=".6" filter="url(#f-blur-sm)"/>
+    </svg>
+    <div class="hero-poster">
+      <p>Больше<br>возможностей<br>сегодня.<br>Свобода<br>завтра.</p>
+      <span>avocado.rest</span>
     </div>
   </div>
 
-  <!-- 3D-слой -->
-  <canvas id="gl" aria-hidden="true"></canvas>
-
-  <!-- Фолбэк без WebGL / reduced-motion -->
-  <div class="poster" aria-hidden="true">
-    <div class="poster-name">NEGRA</div>
-    <div class="poster-sub">// ЗАКРЫТЫЙ ФОРУМ. ОТКРЫТИЕ СКОРО.</div>
+  <div class="container hero-inner">
+    <p class="eyebrow">Инфраструктура без ограничений</p>
+    <h1>Экосистема для защиты, автоматизации и&nbsp;масштабирования <span class="accent">инфраструктуры.</span></h1>
+    <p class="lead">Avocado объединяет защиту трафика, анти-DDoS, защиту от&nbsp;блокировок РКН, офисную автоматизацию, массовую закупку доменов и&nbsp;серверов, ИИ-&#8288;адаптеры, автоматизацию NIC.RU, регистрацию и&nbsp;верификацию аккаунтов. Всё, что нужно для стабильного роста&nbsp;— в&nbsp;одной экосистеме.</p>
+    <div class="hero-actions">
+      <button class="btn btn-primary btn-lg" type="button" data-chat="Здравствуйте! Нужна консультация: подскажите, какой продукт и тариф подойдут под нашу задачу.">Получить консультацию <svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+      <a class="btn btn-ghost btn-lg" href="#products">Посмотреть продукты</a>
+    </div>
+    <ul class="trust">
+      <li><svg class="ic" aria-hidden="true"><use href="#i-shield-check"/></svg>Надёжная инфраструктура</li>
+      <li><svg class="ic" aria-hidden="true"><use href="#i-globe"/></svg>Глобальная сеть</li>
+      <li><svg class="ic" aria-hidden="true"><use href="#i-headset"/></svg>Поддержка 24/7</li>
+    </ul>
   </div>
+</section>
 
-  <!-- Служебные оверлеи -->
-  <div class="scanlines" aria-hidden="true"></div>
-  <div class="grain" aria-hidden="true"></div>
-  <div class="vignette" aria-hidden="true"></div>
-  <div id="glitchflash" aria-hidden="true"></div>
-  <div id="cursor" aria-hidden="true"></div>
+<!-- ─── Продукты ────────────────────────────────────────────────────── -->
+<section class="section products" id="products">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <h2>Наши продукты</h2>
+        <p class="sub">Два мощных решения. Одна экосистема. Больше возможностей для&nbsp;вашего бизнеса.</p>
+      </div>
+      <a class="link-arrow" href="#pricing">Смотреть все продукты <svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+    </div>
 
-  <!-- HUD: углы экрана -->
-  <div class="hud" aria-hidden="false">
-    <button id="logo" class="hud-corner hud-tl" type="button">NEGRA://PRE-LAUNCH</button>
-    <button class="hud-corner hud-tr" type="button" data-snd>[SOUND: OFF]</button>
-    <div class="hud-corner hud-bl hero-ui">STATUS: ГОТОВИМ ШЛЮЗЫ</div>
-    <div class="hud-corner hud-br hero-ui">SCROLL ↓</div>
-  </div>
-
-  <main>
-    <!-- 1. HERO -->
-    <section id="hero">
-      <div class="hero-over hero-ui">// ЗАКРЫТЫЙ ФОРУМ. ОТКРЫТИЕ СКОРО.</div>
-      <h1 class="h1" aria-label="NEGRA">
-        <span class="h1-letter">N</span><span class="h1-letter">E</span><span class="h1-letter">G</span><span class="h1-letter">R</span><span class="h1-letter">A</span>
-      </h1>
-      <div class="hero-bottom hero-ui">
-        <p class="hero-sub">Тёмная сторона интернета. Та, где ещё интересно.</p>
-        <div class="cd-wrap">
-          <div class="cd-top">ДО ОТКРЫТИЯ ШЛЮЗОВ</div>
-          <div class="countdown" data-countdown></div>
-          <div class="cd-under">// T-MINUS · время московское · открытие не переносится</div>
+    <div class="products-grid">
+      <!-- Hass -->
+      <article class="product reveal">
+        <div class="product-text">
+          <div class="product-title">
+            <svg class="product-logo" width="44" height="44" aria-hidden="true"><use href="#i-avocado"/></svg>
+            <div><h3>Avocado Hass</h3><p>Ваш трафик под защитой</p></div>
+          </div>
+          <p class="product-desc">DDoS • РКН • Любые угрозы&nbsp;— мы&nbsp;рядом. Максимальная доступность ваших сервисов в&nbsp;любой ситуации.</p>
+          <ul class="checks">
+            <li><svg class="ic" aria-hidden="true"><use href="#i-check-circle"/></svg>Защита от DDoS-атак</li>
+            <li><svg class="ic" aria-hidden="true"><use href="#i-check-circle"/></svg>Защита от блокировок РКН</li>
+            <li><svg class="ic" aria-hidden="true"><use href="#i-check-circle"/></svg>Стабильность сервисов</li>
+            <li><svg class="ic" aria-hidden="true"><use href="#i-check-circle"/></svg>Глобальная сеть и аналитика</li>
+          </ul>
+          <button class="btn btn-ghost" type="button" data-chat="Здравствуйте! Интересует Avocado Hass — защита от DDoS и блокировок РКН. Расскажите об условиях подключения.">Подробнее о Hass <svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></button>
         </div>
-        <a class="btn-cta" data-cta href="#">ЗАНЯТЬ МЕСТО →</a>
-        <div class="micro">предрегистрация = ранний доступ + низкий номер. бесплатно.</div>
-      </div>
-    </section>
 
-    <!-- 2. МАНИФЕСТ -->
-    <section id="manifesto">
-      <div class="overline">// МАНИФЕСТ</div>
-      <div class="mf">
-        <div class="mf-line">ИНТЕРНЕТ СТАЛ ЛЕНТОЙ.</div>
-        <div class="mf-line">ЛЕНТА РЕШАЕТ, ЧТО ТЫ УВИДИШЬ.</div>
-        <div class="mf-line">АЛГОРИТМ РЕШАЕТ, С КЕМ ТЫ ГОВОРИШЬ.</div>
-        <div class="mf-line is-red">МЫ ТАК НЕ ИГРАЕМ.</div>
-        <div class="mf-line">NEGRA — ФОРУМ СТАРОЙ ШКОЛЫ.</div>
-        <div class="mf-line">ЛЮДИ. ТРЕДЫ. РЕПУТАЦИЯ. ВСЁ.</div>
-      </div>
-      <div class="mf-note">никаких рекомендаций. никакой ленты. зашёл — читаешь то, что выбрал сам.</div>
-    </section>
-
-    <!-- 3. ЧТО ВНУТРИ -->
-    <section id="inside">
-      <div class="overline">// РАЗДЕЛЫ И ПРАВИЛА ИГРЫ</div>
-      <h2 class="h2">ЧТО ВНУТРИ</h2>
-      <div class="bento">
-        <article class="bento-card is-big">
-          <div class="card-idx">[01]</div>
-          <h3>ФОРУМ, А НЕ ЛЕНТА</h3>
-          <p>Треды, ветки, холивары по правилам. Как в лучшие годы интернета — только без пыли.</p>
-        </article>
-        <article class="bento-card">
-          <div class="card-idx">[02]</div>
-          <h3>РЕПУТАЦИЯ РЕШАЕТ</h3>
-          <p>Уровень качается постами, а не донатом. Пишешь дело — растёшь. Пишешь воду — сидишь в песочнице.</p>
-        </article>
-        <article class="bento-card">
-          <div class="card-idx">[03]</div>
-          <h3>ПРИВАТНЫЕ ВЕТКИ</h3>
-          <p>Часть разделов видят не все. Доступ открывается уровнем. Что там — узнаешь, когда дорастёшь.</p>
-        </article>
-        <article class="bento-card is-wide">
-          <div class="card-idx">[04]</div>
-          <h3>IT / КОД / ЖЕЛЕЗО</h3>
-          <p>Разборы, пет-проекты, «посмотрите мой код» без токсичности. Ну, почти без.</p>
-        </article>
-        <article class="bento-card">
-          <div class="card-idx">[05]</div>
-          <h3>МЕМЫ И ИСТОРИИ</h3>
-          <p>Оффтоп, где рождается локальный фольклор. 6 7 придумали не мы, но вайб тот.</p>
-        </article>
-        <article class="bento-card">
-          <div class="card-idx">[06]</div>
-          <h3>ИВЕНТЫ И ДВИЖ</h3>
-          <p>Конкурсы, AMA с интересными людьми, внутренние челленджи. Призы — да.</p>
-        </article>
-        <article class="bento-card is-term">
-          <div class="card-idx">[07] NEGRA://LIVE</div>
-          <div class="term" id="liveTerm"></div>
-          <div class="term-cursor">_</div>
-        </article>
-      </div>
-    </section>
-
-    <!-- 4. ПРИВИЛЕГИИ РАННЕГО ДОСТУПА -->
-    <section id="early">
-      <div class="overline">// EARLY ACCESS</div>
-      <h2 class="h2">ПЕРВЫЕ ПОЛУЧАЮТ ВСЁ</h2>
-      <div class="early-grid">
-        <div class="pass">
-          <div class="pass-head">NEGRA <span>//</span> FOUNDER PASS</div>
-          <div class="pass-caption" id="passCaption">ТВОЙ НОМЕР ПРЯМО СЕЙЧАС:</div>
-          <div class="pass-num" id="memberNum">#0001</div>
-          <div class="pass-bar" aria-hidden="true"></div>
-          <div class="pass-foot">MEMBER SINCE: ДО ОТКРЫТИЯ</div>
-          <div class="badge" id="badge">FOUNDER</div>
+        <div class="dash" aria-hidden="true">
+          <div class="dash-bar"><svg class="dash-logo"><use href="#i-avocado"/></svg><span>Avocado Hass</span><i>×</i></div>
+          <div class="dash-block">
+            <div class="dash-label">Весь трафик</div>
+            <div class="dash-kpi">284.5 Гбит/с <em class="up">+12%</em></div>
+            <svg class="spark" viewBox="0 0 320 90" preserveAspectRatio="none">
+              <g class="grid"><line x1="0" y1="22" x2="320" y2="22"/><line x1="0" y1="45" x2="320" y2="45"/><line x1="0" y1="68" x2="320" y2="68"/></g>
+              <path class="area a-blue" d="M0 60 L30 52 L60 56 L90 40 L120 44 L150 30 L180 36 L210 22 L240 28 L270 18 L300 24 L320 14 L320 90 L0 90 Z"/>
+              <path class="line l-blue" d="M0 60 L30 52 L60 56 L90 40 L120 44 L150 30 L180 36 L210 22 L240 28 L270 18 L300 24 L320 14"/>
+              <path class="area a-orange" d="M0 78 L30 74 L60 76 L90 70 L120 73 L150 64 L180 68 L210 60 L240 63 L270 56 L300 60 L320 52 L320 90 L0 90 Z"/>
+              <path class="line l-orange" d="M0 78 L30 74 L60 76 L90 70 L120 73 L150 64 L180 68 L210 60 L240 63 L270 56 L300 60 L320 52"/>
+            </svg>
+            <div class="legend"><span><i class="dot blue"></i>Легитимный</span><span><i class="dot orange"></i>Заблокированный</span></div>
+          </div>
+          <div class="dash-block">
+            <div class="dash-label">География атак</div>
+            <div class="map-wrap">
+              <svg class="map" viewBox="0 0 300 130">
+                <g fill="url(#p-dots)">
+                  <path d="M18 22c20-8 55-10 78-4 12 3 10 14 2 20-10 8-10 22-22 28-10 5-20 2-24 14-3 9-10 8-14 0-6-12-2-24-10-32-8-8-20-18-10-26z"/>
+                  <path d="M78 70c10-2 20 2 24 10 4 9 0 20-6 30-4 8-8 16-16 12-8-4-6-16-8-26-1-9-4-24 6-26z"/>
+                  <path d="M130 20c20-8 40-4 58 2 6 2 4 10 0 14-8 8-4 18-14 22-10 4-12 12-22 10-8-2-12-10-20-12-10-2-14-12-8-20 2-6 2-12 6-16z"/>
+                  <path d="M136 60c10-4 22-2 28 6 6 8 4 18-2 28-4 8-8 16-16 14-8-2-10-12-14-22-3-8-6-22 4-26z"/>
+                  <path d="M190 22c22-10 60-10 84 0 10 4 8 14 0 20-12 8-18 20-32 24-14 4-30 2-42-6-10-8-24-8-24-20 0-8 6-14 14-18z"/>
+                  <path d="M236 88c8-4 20-2 26 4 5 6 2 14-6 18-8 4-18 4-24-2-6-6-4-16 4-20z"/>
+                </g>
+              </svg>
+              <i class="ping red" style="left:20.67%;top:30.77%"></i>
+              <i class="ping blue" style="left:52.67%;top:32.31%"></i>
+              <i class="ping red" style="left:72%;top:27.69%"></i>
+              <i class="ping orange" style="left:83.33%;top:36.92%"></i>
+              <i class="ping blue" style="left:32%;top:72.31%"></i>
+              <i class="ping orange" style="left:50%;top:61.54%"></i>
+            </div>
+          </div>
+          <div class="dash-row">
+            <div class="dash-mini"><span class="mini-ic green"><svg class="ic"><use href="#i-shield-check"/></svg></span><div><small>Аптайм</small><b>99.99%</b></div></div>
+            <span class="dash-tag">30 дней</span>
+          </div>
         </div>
-        <div class="priv-list">
-          <div class="priv-item">
-            <h3>НИЗКИЙ НОМЕР. НАВСЕГДА.</h3>
-            <p>MEMBER #0047 читается. MEMBER #48213 — нет. Номер выдаётся по порядку регистрации и не меняется никогда.</p>
+      </article>
+
+      <!-- Ettinger -->
+      <article class="product reveal">
+        <div class="product-text">
+          <div class="product-title">
+            <svg class="product-logo" width="44" height="44" aria-hidden="true"><use href="#i-avocado"/></svg>
+            <div><h3>Avocado Ettinger</h3><p>Офисная оркестрация нового поколения</p></div>
           </div>
-          <div class="priv-item">
-            <h3>БЕЙДЖ FOUNDER</h3>
-            <p>Отметка «был до открытия». Не продаётся, не передаётся, не выдаётся после запуска. Вообще никак.</p>
+          <p class="product-desc">Массовая закупка доменов и&nbsp;серверов. ИИ-&#8288;адаптеры. Автоматизация NIC.RU. Регистрация и&nbsp;верификация аккаунтов.</p>
+          <ul class="checks">
+            <li><svg class="ic" aria-hidden="true"><use href="#i-check-circle"/></svg>Массовые закупки и автоматизация</li>
+            <li><svg class="ic" aria-hidden="true"><use href="#i-check-circle"/></svg>ИИ-&#8288;адаптеры и интеграции</li>
+            <li><svg class="ic" aria-hidden="true"><use href="#i-check-circle"/></svg>Регистрация и верификация аккаунтов</li>
+            <li><svg class="ic" aria-hidden="true"><use href="#i-check-circle"/></svg>Управление инфраструктурой</li>
+          </ul>
+          <button class="btn btn-ghost" type="button" data-chat="Здравствуйте! Интересует Avocado Ettinger — закупка доменов и серверов, ИИ-адаптеры, автоматизация NIC.RU. Расскажите об условиях подключения.">Подробнее об Ettinger <svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+        </div>
+
+        <div class="dash" aria-hidden="true">
+          <div class="dash-bar"><svg class="dash-logo"><use href="#i-avocado"/></svg><span>Avocado Ettinger</span><i>×</i></div>
+          <div class="tiles">
+            <div class="tile"><span class="mini-ic blue"><svg class="ic"><use href="#i-globe"/></svg></span><div><small>Домены</small><b>1 248</b><em class="up">+12%</em></div></div>
+            <div class="tile"><span class="mini-ic violet"><svg class="ic"><use href="#i-server"/></svg></span><div><small>Серверы</small><b>342</b><em class="up">+8%</em></div></div>
+            <div class="tile"><span class="mini-ic green"><svg class="ic"><use href="#i-user-plus"/></svg></span><div><small>Аккаунты</small><b>892</b><em class="up">+10%</em></div></div>
+            <div class="tile"><span class="mini-ic gold"><svg class="ic"><use href="#i-cpu"/></svg></span><div><small>ИИ-&#8288;адаптеры</small><b>24</b><em class="up">активны</em></div></div>
           </div>
-          <div class="priv-item">
-            <h3>ЗАКРЫТАЯ ВЕТКА ОСНОВАТЕЛЕЙ</h3>
-            <p>Раздел, куда после открытия дверь заваривается. Внутри — админы, первые люди и решения, которые потом станут правилами.</p>
+          <div class="dash-block">
+            <div class="dash-label dash-label-row"><span>Динамика закупок</span><span class="dash-tag">За 30 дней</span></div>
+            <svg class="spark bars" viewBox="0 0 320 90" preserveAspectRatio="none">
+              <g class="grid"><line x1="0" y1="22" x2="320" y2="22"/><line x1="0" y1="45" x2="320" y2="45"/><line x1="0" y1="68" x2="320" y2="68"/></g>
+              <g class="bar-group">
+                <rect x="6" y="62" width="14" height="28"/><rect x="30" y="56" width="14" height="34"/><rect x="54" y="60" width="14" height="30"/><rect x="78" y="48" width="14" height="42"/><rect x="102" y="52" width="14" height="38"/><rect x="126" y="40" width="14" height="50"/><rect x="150" y="44" width="14" height="46"/><rect x="174" y="34" width="14" height="56"/><rect x="198" y="38" width="14" height="52"/><rect x="222" y="26" width="14" height="64"/><rect x="246" y="30" width="14" height="60"/><rect x="270" y="20" width="14" height="70"/><rect x="294" y="16" width="14" height="74"/>
+              </g>
+              <path class="line l-gold" d="M13 70 L37 64 L61 66 L85 56 L109 58 L133 48 L157 50 L181 42 L205 44 L229 34 L253 36 L277 28 L301 24"/>
+              <g class="l-gold-dots"><circle cx="13" cy="70" r="2.2"/><circle cx="61" cy="66" r="2.2"/><circle cx="109" cy="58" r="2.2"/><circle cx="157" cy="50" r="2.2"/><circle cx="205" cy="44" r="2.2"/><circle cx="253" cy="36" r="2.2"/><circle cx="301" cy="24" r="2.2"/></g>
+            </svg>
           </div>
-          <div class="priv-item">
-            <h3>ПРАВО ГОЛОСА</h3>
-            <p>Первые выбирают, каким будет форум: разделы, правила, вайб. Остальные придут на готовое.</p>
+          <div class="dash-row two">
+            <div class="dash-mini"><span class="ring-g green" style="--v:98"><i>98%</i></span><div><small>Автоматизация</small><b>98%</b></div></div>
+            <div class="dash-mini"><span class="ring-g gold" style="--v:86"><svg class="ic"><use href="#i-badge-check"/></svg></span><div><small>Успешных операций</small><b>1 260 000</b></div></div>
           </div>
-          <a class="priv-more" data-cta href="#">→ забрать номер, пока трёхзначный</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Почему Avocado ──────────────────────────────────────────────── -->
+<section class="section why" id="why">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <h2>Почему Avocado</h2>
+        <p class="sub">Больше, чем отдельные инструменты. Целая экосистема для&nbsp;вашего роста.</p>
+      </div>
+    </div>
+    <div class="why-grid">
+      <div class="feature reveal"><span class="feat-ic green"><svg class="ic" aria-hidden="true"><use href="#i-eco"/></svg></span><div><h3>Одна экосистема</h3><p>Защита, автоматизация и&nbsp;масштабирование&nbsp;— всё в&nbsp;одном бренде.</p></div></div>
+      <div class="feature reveal"><span class="feat-ic violet"><svg class="ic" aria-hidden="true"><use href="#i-brain"/></svg></span><div><h3>Автоматизация через ИИ</h3><p>ИИ-&#8288;адаптеры ускоряют рутинные процессы и&nbsp;сокращают затраты.</p></div></div>
+      <div class="feature reveal"><span class="feat-ic gold"><svg class="ic" aria-hidden="true"><use href="#i-layers"/></svg></span><div><h3>Массовые операции</h3><p>Тысячи доменов, серверов и&nbsp;аккаунтов&nbsp;— в&nbsp;пару кликов.</p></div></div>
+      <div class="feature reveal"><span class="feat-ic green"><svg class="ic" aria-hidden="true"><use href="#i-shield-check"/></svg></span><div><h3>Коммерческий уровень надёжности</h3><p>Инфраструктура, которой доверяют бизнесы по&nbsp;всему миру.</p></div></div>
+      <div class="feature reveal"><span class="feat-ic blue"><svg class="ic" aria-hidden="true"><use href="#i-clock"/></svg></span><div><h3>Высокая доступность</h3><p>Глобальная сеть, мониторинг и&nbsp;поддержка 24/7.</p></div></div>
+      <div class="feature reveal"><span class="feat-ic violet"><svg class="ic" aria-hidden="true"><use href="#i-chart"/></svg></span><div><h3>Удобная аналитика</h3><p>Наглядные данные для&nbsp;быстрых и&nbsp;точных решений.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Как это работает ────────────────────────────────────────────── -->
+<section class="section how" id="how">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <h2>Как это работает</h2>
+        <p class="sub">Полный цикл&nbsp;— от&nbsp;идеи до&nbsp;масштабирования. Avocado автоматизирует каждый этап.</p>
+      </div>
+      <p class="eyebrow right">Простые решения<br>для больших возможностей.</p>
+    </div>
+    <ol class="flow">
+      <li class="step reveal"><span class="step-ic blue"><svg class="ic" aria-hidden="true"><use href="#i-globe"/></svg></span><b>Домены</b><small>Поиск и закупка</small></li>
+      <li class="step reveal"><span class="step-ic gold"><svg class="ic" aria-hidden="true"><use href="#i-server"/></svg></span><b>Серверы</b><small>Выбор и развёртывание</small></li>
+      <li class="step reveal"><span class="step-ic violet"><svg class="ic" aria-hidden="true"><use href="#i-cpu"/></svg></span><b>ИИ-&#8288;адаптеры</b><small>Интеграции и автоматизация</small></li>
+      <li class="step reveal"><span class="step-ic green"><svg class="ic" aria-hidden="true"><use href="#i-cart"/></svg></span><b>Покупка</b><small>Автозакупки (NIC.RU и&nbsp;др.)</small></li>
+      <li class="step reveal"><span class="step-ic blue"><svg class="ic" aria-hidden="true"><use href="#i-user-plus"/></svg></span><b>Регистрация</b><small>Создание аккаунтов</small></li>
+      <li class="step reveal"><span class="step-ic green"><svg class="ic" aria-hidden="true"><use href="#i-badge-check"/></svg></span><b>Верификация</b><small>Проверка и активация</small></li>
+      <li class="step reveal"><span class="step-ic green"><svg class="ic" aria-hidden="true"><use href="#i-shield"/></svg></span><b>Защита</b><small>DDoS, РКН, стабильность</small></li>
+      <li class="step reveal"><span class="step-ic blue"><svg class="ic" aria-hidden="true"><use href="#i-trend"/></svg></span><b>Масштабирование</b><small>Рост без ограничений</small></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ─── Тарифы ──────────────────────────────────────────────────────── -->
+<section class="section pricing" id="pricing">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <h2>Аренда панели</h2>
+        <p class="sub">Панель Avocado&nbsp;— Hass и&nbsp;Ettinger в&nbsp;одном кабинете. Арендуете на&nbsp;нужный срок, стоимость считаем под&nbsp;задачу.</p>
+      </div>
+    </div>
+    <div class="pricing-grid">
+      <div class="plan reveal">
+        <h3>1 месяц</h3>
+        <p class="plan-for">Для теста и&nbsp;коротких проектов</p>
+        <p class="price"><b class="custom">Цена по&nbsp;запросу</b></p>
+        <ul class="checks">
+          <li><svg class="ic" aria-hidden="true"><use href="#i-check-circle"/></svg>Полный доступ к панели</li>
+          <li><svg class="ic" aria-hidden="true"><use href="#i-check-circle"/></svg>Обновления на весь срок</li>
+          <li><svg class="ic" aria-hidden="true"><use href="#i-check-circle"/></svg>Поддержка в чате</li>
+        </ul>
+        <button class="btn btn-ghost btn-block" type="button" data-chat="Здравствуйте! Хочу арендовать панель Avocado на 1 месяц. Какая стоимость и как быстро можно начать?">Запросить цену</button>
+      </div>
+      <div class="plan plan-featured reveal">
+        <span class="badge">Популярный</span>
+        <h3>3 месяца</h3>
+        <p class="plan-for">Для запуска и&nbsp;роста</p>
+        <p class="price"><b class="custom">Цена по&nbsp;запросу</b></p>
+        <ul class="checks">
+          <li><svg class="ic" aria-hidden="true"><use href="#i-check-circle"/></svg>Полный доступ к панели</li>
+          <li><svg class="ic" aria-hidden="true"><use href="#i-check-circle"/></svg>Обновления на весь срок</li>
+          <li><svg class="ic" aria-hidden="true"><use href="#i-check-circle"/></svg>Приоритетная поддержка</li>
+          <li><svg class="ic" aria-hidden="true"><use href="#i-check-circle"/></svg>Помощь с настройкой</li>
+        </ul>
+        <button class="btn btn-primary btn-block" type="button" data-chat="Здравствуйте! Хочу арендовать панель Avocado на 3 месяца. Какая стоимость и как быстро можно начать?">Запросить цену</button>
+      </div>
+      <div class="plan reveal">
+        <h3>12 месяцев</h3>
+        <p class="plan-for">Для постоянной работы</p>
+        <p class="price"><b class="custom">Цена по&nbsp;запросу</b></p>
+        <ul class="checks">
+          <li><svg class="ic" aria-hidden="true"><use href="#i-check-circle"/></svg>Полный доступ к панели</li>
+          <li><svg class="ic" aria-hidden="true"><use href="#i-check-circle"/></svg>Обновления на весь срок</li>
+          <li><svg class="ic" aria-hidden="true"><use href="#i-check-circle"/></svg>Приоритетная поддержка</li>
+          <li><svg class="ic" aria-hidden="true"><use href="#i-check-circle"/></svg>Персональный менеджер</li>
+          <li><svg class="ic" aria-hidden="true"><use href="#i-check-circle"/></svg>Индивидуальные интеграции</li>
+        </ul>
+        <button class="btn btn-ghost btn-block" type="button" data-chat="Здравствуйте! Хочу арендовать панель Avocado на 12 месяцев. Какая стоимость и какие условия?">Запросить цену</button>
+      </div>
+      <div class="pricing-visual reveal" aria-hidden="true">
+        <svg class="pv-scene" viewBox="0 0 320 560" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <linearGradient id="g-pv-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0a1214"/><stop offset=".6" stop-color="#0c1512"/><stop offset="1" stop-color="#1a1a12"/></linearGradient>
+            <radialGradient id="g-moon" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#eef2ee" stop-opacity=".9"/><stop offset=".55" stop-color="#cfd8d0" stop-opacity=".35"/><stop offset="1" stop-color="#cfd8d0" stop-opacity="0"/></radialGradient>
+            <radialGradient id="g-moon-disc" cx="38%" cy="35%" r="70%"><stop offset="0" stop-color="#ffffff"/><stop offset=".6" stop-color="#dfe6dd"/><stop offset="1" stop-color="#9aa89c"/></radialGradient>
+            <linearGradient id="g-road" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd98a" stop-opacity="0"/><stop offset=".5" stop-color="#f2c56a"/><stop offset="1" stop-color="#e3b45c" stop-opacity=".2"/></linearGradient>
+          </defs>
+          <rect width="320" height="560" fill="url(#g-pv-sky)"/>
+          <circle cx="250" cy="230" r="70" fill="url(#g-moon)"/>
+          <circle cx="250" cy="230" r="26" fill="url(#g-moon-disc)"/>
+          <path d="M0 330l60-50 50 30 60-55 55 40 50-25 45 35v255H0z" fill="#0c1310"/>
+          <path d="M0 330l60-50 50 30 60-55 55 40 50-25 45 35" fill="none" stroke="#cfd8d0" stroke-opacity=".18" stroke-width="1.2"/>
+          <path d="M0 400l70-40 60 25 60-45 60 35 70-20v205H0z" fill="#080b09"/>
+          <path d="M40 560c40-60 120-70 130-130s-40-90-10-130" stroke="url(#g-road)" stroke-width="5" fill="none" filter="url(#f-blur-sm)"/>
+          <path d="M40 560c40-60 120-70 130-130s-40-90-10-130" stroke="#ffe7b3" stroke-width="1.6" fill="none"/>
+        </svg>
+        <div class="pv-text">
+          <p>Надёжная инфраструктура сегодня. Больше свободы завтра.</p>
+          <span>avocado.rest</span>
         </div>
       </div>
-    </section>
+    </div>
+    <p class="pricing-note">Нужен другой срок или несколько панелей? <button class="link-inline" type="button" data-chat="Здравствуйте! Нужна аренда панели Avocado на нестандартный срок / несколько панелей. Подскажите условия.">Напишите нам&nbsp;— подберём условия.</button></p>
+  </div>
+</section>
 
-    <!-- 5. ФИНАЛЬНЫЙ CTA -->
-    <section id="final">
-      <h2 class="h2 final-h">ШЛЮЗЫ ОТКРОЮТСЯ ОДИН РАЗ.</h2>
-      <p class="final-sub">Внутрь пустят всех. Но первым — первое.</p>
-      <div class="countdown cd-compact" data-countdown></div>
-      <a class="btn-cta btn-huge" id="finalBtn" data-cta href="#">ПОЛУЧИТЬ ДОСТУП</a>
-      <div class="micro">30 секунд на регистрацию. ник + почта. без паспорта, мы не банк.</div>
-      <div class="micro micro-dim">передумать можно. вернуть низкий номер — нельзя.</div>
-    </section>
-
-    <!-- 6. ФУТЕР -->
-    <footer>
-      <div class="foot-row">
-        <div class="foot-left">NEGRA © 2026 // сделано в темноте</div>
-        <nav class="foot-links">
-          <a data-tg href="#">TELEGRAM</a>
-          <a data-mail href="#">НАПИСАТЬ НАМ</a>
-          <a href="#">ПРАВИЛА</a>
-        </nav>
-        <div class="foot-right" id="uptime">UPTIME: 00d 00h 00m // BUILD v0.9.1-prelaunch</div>
+<!-- ─── CTA ─────────────────────────────────────────────────────────── -->
+<section class="cta" id="contact">
+  <svg class="cta-bg" viewBox="0 0 1400 400" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+    <defs>
+      <radialGradient id="g-cta" cx="55%" cy="72%" r="40%"><stop offset="0" stop-color="#f2c56a" stop-opacity=".35"/><stop offset=".5" stop-color="#b98a35" stop-opacity=".08"/><stop offset="1" stop-color="#b98a35" stop-opacity="0"/></radialGradient>
+    </defs>
+    <rect width="1400" height="400" fill="url(#g-cta)"/>
+    <path d="M0 300l150-90 110 60 150-110 140 80 120-60 150 90 140-70 160 60 130-40 150 70v110H0z" fill="#0b100d"/>
+    <path d="M0 300l150-90 110 60 150-110 140 80 120-60 150 90 140-70 160 60 130-40 150 70" fill="none" stroke="#f2c56a" stroke-opacity=".16" stroke-width="1.2"/>
+    <path d="M0 360l180-60 140 30 160-50 170 40 150-25 180 45 170-30 250 40v50H0z" fill="#070908"/>
+    <path class="cta-road" d="M330 400C500 392 640 368 720 325" stroke="#f2c56a" stroke-width="4" fill="none" filter="url(#f-blur-sm)" opacity=".8"/>
+    <path class="cta-road" d="M330 400C500 392 640 368 720 325" stroke="#ffe7b3" stroke-opacity=".9" stroke-width="1.2" fill="none"/>
+  </svg>
+  <div class="container cta-inner">
+    <div class="cta-text">
+      <h2>Готовы внедрить Avocado в&nbsp;свой бизнес?</h2>
+      <p>Расскажите о&nbsp;ваших задачах, и&nbsp;наша команда подберёт оптимальное решение.</p>
+    </div>
+    <div class="cta-side">
+      <div class="cta-actions">
+        <button class="btn btn-primary btn-lg" type="button" data-chat="Здравствуйте! Хотим внедрить Avocado — подскажите, с чего начать?">Оставить заявку <svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+        <button class="btn btn-ghost btn-lg" type="button" data-chat="">Связаться</button>
       </div>
-      <div class="foot-disclaimer">NEGRA — легальное комьюнити. «Дарк» — это эстетика, а не род занятий. Всё по закону, всё по любви.</div>
-    </footer>
-  </main>
-
-  <!-- Субтитры черепа -->
-  <div id="captions" role="status" aria-live="polite">
-    <span class="cap-prefix">&gt;</span> <span class="cap-text"></span><span class="cap-cursor">_</span>
+      <ul class="trust">
+        <li><svg class="ic" aria-hidden="true"><use href="#i-bolt"/></svg>Быстрый ответ</li>
+        <li><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg>Конфиденциально</li>
+        <li><svg class="ic" aria-hidden="true"><use href="#i-sliders"/></svg>Индивидуальный подход</li>
+      </ul>
+    </div>
   </div>
+</section>
 
-  <!-- Пасхалка «6 7» -->
-  <div id="egg67" aria-hidden="true">
-    <div class="egg67-digit">6</div>
+</main>
+
+<!-- ─── Подвал ──────────────────────────────────────────────────────── -->
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <a class="brand" href="#top">
+      <svg class="brand-mark" width="40" height="40" aria-hidden="true"><use href="#i-avocado"/></svg>
+      <span class="brand-text"><b>Avocado</b><small>avocado.rest</small></span>
+    </a>
+    <p class="footer-tagline">Надёжная инфраструктура. Больше возможностей.</p>
+    <nav class="footer-nav" aria-label="Навигация в подвале">
+      <a href="#products">Продукты</a>
+      <a href="#why">Решения</a>
+      <a href="#pricing">Аренда</a>
+      <a href="#contact">Контакты</a>
+    </nav>
+    <div class="socials">
+      <a href="#" data-link="telegramUrl" target="_blank" rel="noopener" aria-label="Telegram"><svg class="ic" aria-hidden="true"><use href="#i-telegram"/></svg></a>
+      <a href="#" data-link="youtubeUrl" target="_blank" rel="noopener" aria-label="YouTube"><svg class="ic" aria-hidden="true"><use href="#i-youtube"/></svg></a>
+      <a href="#" data-link="linkedinUrl" target="_blank" rel="noopener" aria-label="LinkedIn"><svg class="ic" aria-hidden="true"><use href="#i-linkedin"/></svg></a>
+    </div>
+    <p class="copy">© 2024–<span id="year">2026</span> Avocado. Все права защищены.</p>
   </div>
+</footer>
 
-  <!-- Мобильный sticky-бар -->
-  <div class="mobilebar">
-    <button type="button" data-cc data-short>[CC✓]</button>
-    <a data-cta href="#">ЗАНЯТЬ МЕСТО</a>
-    <button type="button" data-snd data-short>[SND✕]</button>
-  </div>
+<div id="chat-root"></div>
 
-  <script src="vendor/gsap/gsap.min.js"></script>
-  <script src="vendor/gsap/ScrollTrigger.min.js"></script>
-  <script type="module" src="js/main.js"></script>
+<script src="js/config.js"></script>
+<script src="js/main.js" defer></script>
+<script src="js/chat.js" defer></script>
 </body>
 </html>

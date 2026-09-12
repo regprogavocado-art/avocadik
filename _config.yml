@@ -1,0 +1,8 @@
+# GitHub Pages (Jekyll): публикуем только сайт. Бэкенд, документация и служебные файлы
+# на avocado.rest не отдаются (в самом репозитории они, как и прежде, видны).
+exclude:
+  - worker
+  - design-system
+  - README.md
+  - .gitignore
+  - CLAUDE.md

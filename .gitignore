@@ -1,0 +1,13 @@
+# Cloudflare Worker (worker/)
+worker/node_modules/
+worker/.wrangler/
+worker/.dev.vars
+worker/package-lock.json
+
+# Локальные артефакты
+.DS_Store
+Thumbs.db
+*.log
+
+# wrangler, если запущен из корня
+.wrangler/

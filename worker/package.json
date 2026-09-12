@@ -1,0 +1,17 @@
+{
+  "name": "avocado-chat-worker",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Avocado site chat <-> Telegram bridge (Cloudflare Worker + D1)",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev --port 8787",
+    "deploy": "wrangler deploy",
+    "d1:create": "wrangler d1 create avocado-chat",
+    "tail": "wrangler tail",
+    "mock:tg": "node scripts/mock-telegram.mjs"
+  },
+  "devDependencies": {
+    "wrangler": "^4.131.1"
+  }
+}
