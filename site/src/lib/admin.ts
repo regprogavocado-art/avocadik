@@ -1,5 +1,6 @@
 import {categories,getSettings,mapProduct,pricePeriods,safeSourceUrl,validSourceDate,type Env,type Wallet} from './content.ts';
 import {responseError,redirect,type AdminSession} from './auth.ts';
+import {reservedPageSlugs} from './public-route-rules.mjs';
 export class ValidationError extends Error {}
 function fail(message:string):never {throw new ValidationError(message)}
 export function field(form:FormData,key:string,max=1000,required=false) {const value=String(form.get(key)||'').trim();if(value.length>max)fail(`Поле «${key}» слишком длинное.`);if(required&&!value)fail('Заполните обязательные поля.');return value;}
@@ -28,7 +29,7 @@ export async function mutate(action:string,request:Request,env:Env,form:FormData
   let back=action==='wallet'?'settings':action;
   try {
     if(action==='pages') {
-      const pageSlug=slug(form);if(['admin','api','media','index'].includes(pageSlug))fail('Этот адрес зарезервирован.');
+      const pageSlug=slug(form);if(reservedPageSlugs.includes(pageSlug))fail('Этот адрес зарезервирован.');
       await saveRecord(env,'cms_pages',numberId(form),{slug:pageSlug,title:field(form,'title',150,true),summary:field(form,'summary',500),body:field(form,'body',30000),status:choice(form,'status',['published','draft'])});
     } else if(action==='products') {
       const price=field(form,'price',50);if(price&&!validAmount(price))fail('Цена должна быть положительным десятичным числом через точку или пустой.');

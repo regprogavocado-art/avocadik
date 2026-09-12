@@ -1,4 +1,5 @@
 import {categories,seedPages,seedProducts,type Env} from './content.ts';
+import {reservedPageSlugs} from './public-route-rules.mjs';
 
 /** Public route inventory only. Never serialize CMS records or procurement data. */
 export interface PublicManifest {generatedAt:string;paths:string[]}
@@ -6,7 +7,7 @@ interface PublishedPage {slug:string;status?:string}
 interface PublishedProduct {slug:string;category:string;status?:string}
 interface PublishedNews {slug:string;hidden?:boolean|number;published_at?:number}
 const categoryIds=new Set(categories.map(category=>category.id));
-const reservedPages=new Set(['admin','api','media','index','assets','css','js','fonts','404','robots','sitemap']);
+const reservedPages=new Set(reservedPageSlugs);
 const safeSlug=(value:unknown):value is string=>typeof value==='string'&&value.length<=80&&/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value);
 
 export function buildPublicManifest(pages:PublishedPage[],products:PublishedProduct[],news:PublishedNews[],now=Date.now()):PublicManifest {

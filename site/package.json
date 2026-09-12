@@ -10,6 +10,7 @@
     "build": "npm run assets && astro build && node scripts/package-pages.mjs && node scripts/check-secrets.mjs",
     "preview": "node scripts/pages-cli.mjs dev ../site/pages-dist --port 4321 --ip 127.0.0.1 --persist-to ../site/.wrangler/state",
     "test": "node --test tests/*.test.*",
+    "export:github": "node scripts/export-github-pages.mjs && node scripts/check-secrets.mjs --github",
     "test:ui": "node tests/site-ui.cjs",
     "dev:stack": "node scripts/dev-stack.mjs",
     "test:admin": "node tests/admin-ui.cjs",
@@ -24,11 +25,12 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
-    "@cloudflare/workers-types": "5.20260911.1",
     "@axe-core/playwright": "^4.11.1",
-    "playwright": "^1.58.2",
+    "@cloudflare/workers-types": "5.20260911.1",
     "lighthouse": "^13.0.1",
+    "playwright": "^1.58.2",
     "typescript": "^5.9.3",
+    "ultrahtml": "1.7.0",
     "wrangler": "^4.131.1"
   }
 }

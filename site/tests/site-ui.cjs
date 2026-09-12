@@ -5,8 +5,8 @@ const { mkdir, readFile, writeFile } = require('node:fs/promises');
 const path = require('node:path');
 
 const base = process.env.UI_BASE_URL || 'http://127.0.0.1:4321';
-const output = path.resolve(__dirname, '../output/playwright/public');
-const routes = process.env.UI_ROUTES ? process.env.UI_ROUTES.split(',').filter(Boolean) : [ '/', '/software', '/hass', '/ettinger', '/rent', '/catalog', '/catalog/domains', '/catalog/vps', '/catalog/dedicated', '/catalog/bulletproof', '/catalog/proxies', '/catalog/vps/vps', '/catalog/domains/domain-com', '/catalog/proxies/ipv4-private', '/countries', '/payment', '/news', '/contacts' ];
+const output = process.env.UI_OUTPUT_DIR ? path.resolve(process.env.UI_OUTPUT_DIR) : path.resolve(__dirname, '../output/playwright/public');
+const routes = (process.env.UI_ROUTES ? process.env.UI_ROUTES.split(',').filter(Boolean) : [ '/', '/software', '/hass', '/ettinger', '/rent', '/catalog', '/catalog/domains', '/catalog/vps', '/catalog/dedicated', '/catalog/bulletproof', '/catalog/proxies', '/catalog/vps/vps', '/catalog/domains/domain-com', '/catalog/proxies/ipv4-private', '/countries', '/payment', '/news', '/contacts' ]).map(route => route.replace(/\/+$/, '') || '/');
 if (process.env.UI_NEWS_SLUG) routes.push(`/news/${encodeURIComponent(process.env.UI_NEWS_SLUG)}`);
 const findings = [];
 const privateCatalogFile = path.resolve(__dirname, '../../output/procurement-sources.json');
@@ -45,6 +45,12 @@ async function privateCatalogPatterns() {
   try {
     for (const width of [1440, 390]) {
       const context = await browser.newContext({ viewport: { width, height: width === 1440 ? 1000 : 844 }, deviceScaleFactor: 1, reducedMotion: 'reduce' });
+      let blockedWrites = 0;
+      await context.route('**/*', route => {
+        if (['GET', 'HEAD', 'OPTIONS'].includes(route.request().method())) return route.continue();
+        blockedWrites++;
+        return route.abort();
+      });
       const page = await context.newPage();
       const pageErrors = [];
       page.on('pageerror', error => pageErrors.push(error.message));
@@ -72,7 +78,7 @@ async function privateCatalogPatterns() {
         assert.deepEqual(brokenImages, [], `${route}: broken images`);
         const a11y = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze();
         const violations = a11y.violations.map(item => ({ id: item.id, impact: item.impact, nodes: item.nodes.map(node => ({ target: node.target, summary: node.failureSummary })) }));
-        const name = route === '/' ? 'home' : route.slice(1).replaceAll('/', '-');
+        const name = route === '/' ? 'home' : route.replace(/^\/+|\/+$/g, '').replace(/[^a-zA-Z0-9-]+/g, '-');
         await page.screenshot({ path: path.join(output, `${name}-${width}.png`), fullPage: true });
         await page.screenshot({ path: path.join(output, `${name}-${width}-viewport.png`), fullPage: false });
         findings.push({ route, width, status: response.status(), errors: [...pageErrors], violations });
@@ -90,7 +96,7 @@ async function privateCatalogPatterns() {
         assert.ok(await toggle.evaluate(element => element === document.activeElement), 'Escape restores menu toggle focus');
         await toggle.click();
         await page.getByRole('navigation', { name: 'Мобильная навигация', exact: true }).getByRole('link', { name: 'Оплата', exact: true }).click();
-        assert.equal(new URL(page.url()).pathname, '/payment');
+        assert.equal(new URL(page.url()).pathname.replace(/\/+$/, ''), '/payment');
       }
       if (!process.env.UI_SKIP_CHAT) {
         const cta = page.locator('main [data-chat]').first();
@@ -106,7 +112,9 @@ async function privateCatalogPatterns() {
         await page.getByRole('button', { name: 'Свернуть чат', exact: true }).click();
         assert.ok(await cta.evaluate(element => element === document.activeElement), 'Chat restores opener focus');
       }
+      assert.equal(blockedWrites, 0, `${width}: public UI never attempts content writes`);
       await context.close();
+      console.log(`PASS: ${routes.length} routes at ${width}px.`);
     }
     const page = await browser.newPage();
     for (const route of ['/this-page-does-not-exist', '/catalog/not-a-category', '/catalog/vps/not-a-product', '/news/not-a-news-item']) {

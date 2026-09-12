@@ -20,6 +20,7 @@ if(process.argv.includes('--git')) {
  console.log('Git index secret scan passed: '+paths.length+' files checked.');
  process.exit(0);
 }
-const files=await walk(resolve(root,'site/pages-dist'));
+const artifact=process.argv.includes('--github')?'site/github-dist':'site/pages-dist';
+const files=await walk(resolve(root,artifact));
 for(const file of files){const bytes=await readFile(file);if(secrets.some(secret=>bytes.includes(Buffer.from(secret))))throw new Error('Credential found in build artifact: '+relative(root,file));if(/(?:^|[\\/])(?:\.dev\.vars|\.env|secrets\.json)/.test(file))throw new Error('Private file in build');}
-console.log('Build secret scan passed: '+files.length+' files checked, no known credentials.');
+console.log('Build secret scan passed ('+artifact+'): '+files.length+' files checked, no known credentials.');

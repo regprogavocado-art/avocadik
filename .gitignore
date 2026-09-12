@@ -20,6 +20,7 @@ site/node_modules/
 site/.astro/
 site/dist/
 site/pages-dist/
+site/github-dist/
 pages/.dev.vars*
 pages/.wrangler/
 site/public/assets/

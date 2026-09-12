@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 import {DatabaseSync} from 'node:sqlite';
 import {readFileSync} from 'node:fs';
 import {buildPublicManifest,getPublicManifest,publicManifestResponse} from '../src/lib/public-manifest.ts';
+import {reservedPageSlugs} from '../src/lib/public-route-rules.mjs';
+import {mutate} from '../src/lib/admin.ts';
 
 const now=Date.parse('2026-09-12T12:00:00Z');
 function database(){
@@ -66,6 +68,18 @@ test('published slugs cannot turn the export into private endpoint or arbitrary-
     {slug:'future',published_at:now+1},
   ],now);
   assert.deepEqual(result.paths,['/','/catalog/vps','/catalog/vps/safe-product','/custom-page','/news/safe-story']);
+  assert.deepEqual(buildPublicManifest(reservedPageSlugs.map(slug=>({slug,status:'published'})),[],[],now).paths,[]);
+});
+
+test('CMS rejects reserved page routes before writing to the database',async()=>{
+  let writes=0;
+  for(const slug of reservedPageSlugs){
+    const form=new FormData();form.set('slug',slug);form.set('title','Reserved');form.set('status','published');
+    const response=await mutate('pages',new Request('https://avocado-rest.pages.dev/admin/pages',{method:'POST'}),{DB:{prepare(){writes++;throw new Error('Unexpected database access')}}},form,{});
+    assert.equal(response.status,303,slug);
+    assert.match(response.headers.get('location'),/^\/admin\/pages\?error=/,slug);
+  }
+  assert.equal(writes,0);
 });
 
 test('manifest is uncached, excluded from indexing and fails closed without exposing database errors',async()=>{
