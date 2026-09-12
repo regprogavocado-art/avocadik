@@ -111,7 +111,8 @@ async function main() {
       check(`${label}: synthetic session is empty`, Array.isArray(history.messages) && history.messages.length === 0 && history.session === null);
     }
     check('Telegram read-only check: bot token configured', Boolean(owner.TELEGRAM_BOT_TOKEN));
-    const telegramResponse = await get(`https://api.telegram.org/bot${owner.TELEGRAM_BOT_TOKEN}/getWebhookInfo`);
+    // This Bot API method is read-only. POST avoids stale cached GET metadata.
+    const telegramResponse = await fetch(`https://api.telegram.org/bot${owner.TELEGRAM_BOT_TOKEN}/getWebhookInfo`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' }, body: '{}', redirect: 'manual', signal: AbortSignal.timeout(25_000) });
     check('Telegram getWebhookInfo: HTTP 200', telegramResponse.status === 200);
     const telegram = await telegramResponse.json();
     check('Telegram getWebhookInfo: successful', telegram.ok === true && Boolean(telegram.result));

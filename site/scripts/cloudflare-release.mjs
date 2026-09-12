@@ -87,7 +87,11 @@ if(action==='prepare'){
  console.log('Pages release uploaded: '+state.url);
 }else if(action==='webhook'){
  if(!/^[A-Za-z0-9_-]{16,256}$/.test(owner.WEBHOOK_SECRET||''))throw new Error('Webhook secret is missing or invalid; registration was not attempted.');
- const response=await fetch('https://avocado-chat.avocado-chat-worker.workers.dev/tg/setup',{headers:{'X-Setup-Key':owner.WEBHOOK_SECRET}});
+ if(!owner.TELEGRAM_BOT_TOKEN)throw new Error('Bot token is missing; webhook registration cannot be verified.');
+ const response=await fetch('https://avocado-chat.avocado-chat-worker.workers.dev/tg/setup?fresh='+Date.now(),{headers:{'X-Setup-Key':owner.WEBHOOK_SECRET,'Cache-Control':'no-cache',Pragma:'no-cache'},redirect:'manual',signal:AbortSignal.timeout(25000)});
  const result=await response.json();if(!response.ok||!result.ok)throw new Error('Webhook registration failed.');
- console.log(JSON.stringify({webhookConfigured:true,bot:result.bot}));
+ const verification=await fetch('https://api.telegram.org/bot'+owner.TELEGRAM_BOT_TOKEN+'/getWebhookInfo',{method:'POST',headers:{'Content-Type':'application/json','Cache-Control':'no-cache'},body:'{}',redirect:'manual',signal:AbortSignal.timeout(25000)});
+ const info=await verification.json(),expectedUpdates=['message','channel_post','edited_channel_post'];
+ if(!verification.ok||!info.ok||info.result?.url!=='https://avocado-chat.avocado-chat-worker.workers.dev/tg/webhook'||!expectedUpdates.every(type=>info.result?.allowed_updates?.includes(type)))throw new Error('Webhook readback did not confirm the expected endpoint and channel subscription; repeat setup after deployment propagation.');
+ console.log(JSON.stringify({webhookConfigured:true,bot:result.bot,allowedUpdates:expectedUpdates,pendingUpdates:Number(info.result.pending_update_count||0),hasLastError:Boolean(info.result.last_error_message)}));
 }else throw new Error('Usage: node scripts/cloudflare-release.mjs prepare|migrate|worker|site|webhook');

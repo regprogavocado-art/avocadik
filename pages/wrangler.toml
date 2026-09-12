@@ -21,4 +21,3 @@ bucket_name = "avocado-media"
 [[services]]
 binding = "CHAT_SERVICE"
 service = "avocado-chat"
-

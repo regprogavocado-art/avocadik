@@ -15,4 +15,3 @@ if(account){
 const [bot,channel]=await Promise.all([tg('getMe',{}),tg('getChat',{chat_id:'@avocadodev'})]);
 console.log(JSON.stringify({bot:bot.ok?{id:bot.result.id,username:bot.result.username}:bot.description,channel:channel.ok?{id:channel.result.id,title:channel.result.title,type:channel.result.type,username:channel.result.username}:channel.description}));
 if(bot.ok&&channel.ok){const member=await tg('getChatMember',{chat_id:channel.result.id,user_id:bot.result.id});console.log(JSON.stringify({botChannelStatus:member.ok?member.result.status:member.description}));await writeFile(new URL('../output/telegram-channel.json',import.meta.url),JSON.stringify({id:channel.result.id,username:channel.result.username,botStatus:member.ok?member.result.status:'unknown'}));}
-

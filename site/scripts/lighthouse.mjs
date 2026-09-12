@@ -6,7 +6,9 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
 const base = process.env.UI_BASE_URL || 'http://127.0.0.1:4321';
-const output = fileURLToPath(new URL('../output/lighthouse/', import.meta.url));
+const reportName = process.env.LIGHTHOUSE_REPORT_NAME || '';
+if (reportName && !/^[a-zA-Z0-9_-]+$/.test(reportName)) throw new Error('LIGHTHOUSE_REPORT_NAME must be a simple directory name');
+const output = path.join(fileURLToPath(new URL('../output/lighthouse/', import.meta.url)), reportName);
 const allRoutes = ['/', '/hass', '/ettinger', '/rent', '/catalog', '/catalog/domains', '/catalog/vps', '/catalog/dedicated', '/catalog/bulletproof', '/catalog/proxies', '/catalog/vps/vps', '/countries', '/payment', '/news', '/contacts'];
 const args = process.argv.slice(2);
 await mkdir(output, { recursive: true });
