@@ -67,7 +67,7 @@ const criticalStyles = fontsCss.replaceAll('../assets/fonts/', '/assets/fonts/')
     <main id="main" tabindex="-1"><slot /></main>
     <footer class="site-footer container">
       <div class="footer-top"><div class="footer-brand"><Brand/><p>Собственное ПО.<br/>Защита и автоматизация.</p></div><div class="footer-links"><div><h2>Наше ПО</h2><a href="/software">Заказная разработка</a><a href="/hass">Avocado Hass</a><a href="/ettinger">Avocado Ettinger</a><a href="/rent">Аренда панели</a></div><div><h2>Сервисы и информация</h2><a href="/catalog">Дополнительные услуги</a><a href="/countries">Страны</a><a href="/payment">Оплата криптовалютой</a><a href="/news">Новости</a><a href="/contacts">Контакты</a></div><div><h2>Обсудим проект</h2><button class="footer-chat" type="button" data-chat="">Написать в чат <Icon name="arrow" /></button><a href={telegramUrl} target="_blank" rel="noopener noreferrer">Telegram <Icon name="telegram" /></a>{settings.email && <a href={`mailto:${settings.email}`}>{settings.email}</a>}</div></div></div>
-      <div class="footer-bottom"><span>© {new Date().getFullYear()} Avocado</span><span>Больше возможностей сегодня.</span><a href="/admin">Вход для команды</a></div>
+      <div class="footer-bottom"><span>© {new Date().getFullYear()} Avocado</span><span>Больше возможностей сегодня.</span></div>
     </footer>
     <script is:inline type="application/json" id="avocado-config" set:html={configJson} />
     <script is:inline>window.AVOCADO_CONFIG = JSON.parse(document.getElementById('avocado-config').textContent); window.AVOCADO_CONFIG.chatApiBase = window.location.origin;</script>
