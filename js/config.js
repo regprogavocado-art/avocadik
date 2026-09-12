@@ -3,7 +3,7 @@ window.AVOCADO_CONFIG = {
   // Адрес Cloudflare Worker из папки worker/ (без слэша в конце).
   // Пример: 'https://avocado-chat.<account>.workers.dev' или 'https://chat.avocado.rest'
   // Пусто — чат работает в режиме «напишите в Telegram» (кнопка со ссылкой на telegramUrl).
-  chatApiBase: '',
+  chatApiBase: 'https://avocado-chat.avocado-chat-worker.workers.dev',
 
   // Ссылки: иконка Telegram в подвале и кнопка в заглушке чата. Пусто — скрываются.
   // Бот @avogurubot: сообщения посетителей пересылаются оператору, ответы уходят им обратно (см. worker/)

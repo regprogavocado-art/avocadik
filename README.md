@@ -43,7 +43,14 @@ python -m http.server 8000
 уходит посетителю в личку через бота. Пока воркер не задеплоен, сообщения боту копятся у Telegram до 24 часов
 и будут доставлены после регистрации webhook.
 
-## Чат: настройка (один раз, ~10 минут)
+## Текущая конфигурация (12.09.2026)
+
+- Воркер: `https://avocado-chat.avocado-chat-worker.workers.dev` (аккаунт Cloudflare redacted@example.invalid, база D1 `avocado-chat`).
+- Бот: @avogurubot, webhook зарегистрирован, оператор — chat_id из секрета `ADMIN_CHAT_ID`.
+- Секреты воркера продублированы локально в `worker/.dev.vars.prod` (в git не попадает). Логи: `cd worker && npx wrangler tail`.
+- Переразвернуть после правок воркера: `cd worker && CLOUDFLARE_API_TOKEN=<токен> npx wrangler deploy`.
+
+## Чат: настройка с нуля (один раз, ~10 минут)
 
 Нужны: аккаунт Cloudflare (бесплатного тарифа достаточно), Node.js 18+.
 

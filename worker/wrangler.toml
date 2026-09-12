@@ -22,8 +22,7 @@ ALLOWED_ORIGINS = "https://avocado.rest,https://www.avocado.rest,https://regprog
 [[d1_databases]]
 binding = "DB"
 database_name = "avocado-chat"
-# ↓ заменить на database_id из вывода `npm run d1:create`
-database_id = "00000000-0000-0000-0000-000000000000"
+database_id = "31b29b96-d036-45d1-9143-7233069154e2"
 
 # Секреты задаются командой `npx wrangler secret put <NAME>`:
 #   TELEGRAM_BOT_TOKEN — токен бота от @BotFather
