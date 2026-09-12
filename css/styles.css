@@ -130,7 +130,7 @@ svg { display: block; }
 .nav-open .nav-toggle .ic-close { display: block; }
 
 /* ─── Hero ─────────────────────────────────────────────────────────── */
-.hero { position: relative; overflow: hidden; min-height: calc(100vh - var(--header-h)); display: flex; align-items: center; }
+.hero { position: relative; overflow: hidden; min-height: min(780px, calc(100vh - var(--header-h))); display: flex; align-items: center; }
 .hero-inner { position: relative; z-index: 2; padding-block: clamp(40px, 6vh, 96px); width: 100%; }
 .hero-inner > * { max-width: 620px; }
 .hero h1 { margin-top: 18px; text-wrap: balance; }
@@ -141,7 +141,7 @@ svg { display: block; }
 .trust .ic { color: var(--leaf); }
 
 .hero-visual {
-  position: absolute; inset: 0 0 0 auto; width: 58%; z-index: 1;
+  position: absolute; inset: 0; width: 100%; z-index: 1;
   pointer-events: none;
 }
 .hero-sky {
@@ -155,12 +155,12 @@ svg { display: block; }
   /* растворение в фон слева и снизу */
   content: ""; position: absolute; inset: 0; z-index: 5;
   background:
-    linear-gradient(90deg, var(--bg) 0%, rgba(8, 10, 9, .85) 18%, rgba(8, 10, 9, 0) 55%),
-    linear-gradient(180deg, rgba(8, 10, 9, .35) 0%, rgba(8, 10, 9, 0) 25%, rgba(8, 10, 9, 0) 80%, var(--bg) 100%);
+    linear-gradient(90deg, rgba(8, 10, 9, .96) 0%, rgba(8, 10, 9, .76) 30%, rgba(8, 10, 9, .30) 49%, transparent 69%),
+    linear-gradient(180deg, rgba(8, 10, 9, .1) 0%, transparent 72%, var(--bg) 100%);
 }
-/* рендер сцены: авокадо на камнях у озера */
+/* Широкая сцена сохраняет масштаб монумента и свободную область для текста. */
 .hero-img, .hero-img img { position: absolute; inset: 0; width: 100%; height: 100%; }
-.hero-img img { object-fit: cover; object-position: 50% 100%; display: block; }
+.hero-img img { object-fit: cover; object-position: 70% 50%; display: block; }
 .hero-poster {
   position: absolute; z-index: 4;
   right: clamp(24px, 5vw, 72px); top: 16%;
@@ -275,7 +275,14 @@ svg { display: block; }
 .ring-g.gold { --c: var(--gold); color: var(--gold); }
 
 /* ─── Почему ───────────────────────────────────────────────────────── */
-.why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.why-body { position: relative; display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.4fr); align-items: center; gap: 36px; }
+.guardian-portrait { position: relative; margin: 0; text-align: center; }
+.guardian-portrait::before { content: ""; position: absolute; inset: 12% 2% 8%; z-index: -1; background: radial-gradient(ellipse, rgba(227,180,92,.14), transparent 68%); }
+.guardian-portrait img { display: block; width: 100%; max-width: 420px; height: auto; margin-inline: auto; filter: drop-shadow(0 22px 30px rgba(0,0,0,.35)); }
+.guardian-portrait figcaption { margin-top: 16px; color: var(--muted); font-size: .8125rem; }
+.why-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 18px; }
+.why .feature { flex-direction: column; gap: 17px; padding: 24px; }
+.coming-soon { color: var(--gold); font-weight: 600; }
 .feature { display: flex; gap: 18px; padding: 26px; border-radius: var(--radius); transition: border-color .2s var(--ease); }
 .feature:hover { border-color: var(--line-2); }
 .feature h3 { font-size: 1.0625rem; }
@@ -403,7 +410,7 @@ svg { display: block; }
 }
 @media (max-width: 1024px) {
   .why-grid { grid-template-columns: repeat(2, 1fr); }
-  .hero-visual { width: 66%; }
+  .hero-visual { width: 100%; }
   .hero-inner > * { max-width: 520px; }
   /* гамбургер уже здесь: на 901–1024px кнопки шапки не помещаются */
   .nav {
@@ -431,17 +438,19 @@ svg { display: block; }
   .hero-inner > * { max-width: 620px; }
   .hero-visual {
     order: 2;
-    position: relative; width: auto; height: 380px; margin: 0 var(--gutter) 48px;
-    border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--line);
+    position: relative; width: 100%; height: 380px; margin: 0 0 24px;
+    overflow: hidden;
   }
-  .hero-visual::before { background: linear-gradient(180deg, rgba(8, 10, 9, 0) 70%, rgba(8, 10, 9, .6) 100%); }
-  .hero-img img { object-position: 50% 70%; }
+  .hero-visual::before { background: linear-gradient(180deg, var(--bg), transparent 18%, transparent 75%, var(--bg)); }
+  .hero-img img { object-position: 88% 50%; }
   .hero-poster { right: 16px; top: 16px; width: 168px; padding: 16px; }
   .hero-poster p { font-size: 10px; letter-spacing: .24em; }
 
   .section-head { flex-direction: column; align-items: flex-start; gap: 12px; }
   .eyebrow.right { text-align: left; }
   .product { grid-template-columns: 1fr; }
+  .why-body { grid-template-columns: 1fr; gap: 32px; }
+  .guardian-portrait img { max-width: 360px; }
   .plan { padding: 24px 18px; }
   .btn-block { white-space: normal; line-height: 1.25; padding-block: 12px; }
   .cta-inner { flex-direction: column; align-items: flex-start; }
@@ -454,6 +463,8 @@ svg { display: block; }
 }
 @media (max-width: 640px) {
   .why-grid { grid-template-columns: 1fr; }
+  .guardian-portrait img { max-width: 300px; }
+  .why .feature { flex-direction: row; gap: 18px; }
   .flow { grid-template-columns: repeat(2, 1fr); }
   .step::after, .step::before { display: none; }
   .pricing-grid { grid-template-columns: 1fr; }
