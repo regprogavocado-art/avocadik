@@ -1,0 +1,18 @@
+---
+import { env } from 'cloudflare:workers';
+import SiteLayout from '../layouts/SiteLayout.astro';
+import PageHeading from '../components/PageHeading.astro';
+import BodyText from '../components/BodyText.astro';
+import ChatButton from '../components/ChatButton.astro';
+import CTABand from '../components/CTABand.astro';
+import Icon from '../components/Icon.astro';
+import { getSiteData } from '../lib/content';
+const { pages, settings } = await getSiteData(env);
+const page = pages.find(page => page.slug === 'payment');
+if (!page) return Astro.rewrite('/404');
+---
+<SiteLayout title={page?.title || 'Оплата криптовалютой'} description={page?.summary} settings={settings}>
+  <PageHeading title={page?.title || 'Оплата криптовалютой'} description={page?.summary || 'Любая криптовалюта — по согласованию. Заказ через чат без регистрации, KYC и верификации на сайте.'}><div class="currency-list" aria-label="Примеры валют для согласования"><span>BTC</span><span>ETH</span><span>USDT · TRC-20 / ERC-20</span><span>XMR</span><span>LTC</span></div></PageHeading>
+  <section class="section"><div class="container"><div class="payment-layout"><div><ol class="steps"><li class="step"><span class="step-number">01</span><h2>Обсуждаем заказ</h2><p>Напишите в чат, какие услуги нужны. Согласуем наличие, стоимость, валюту и сеть перевода.</p></li><li class="step"><span class="step-number">02</span><h2>Получаете счёт</h2><p>Пришлём сумму, адрес кошелька и выбранную сеть. Перед переводом проверьте, что сеть в вашем кошельке совпадает с сетью в счёте.</p></li><li class="step"><span class="step-number">03</span><h2>Переводите оплату</h2><p>Отправьте сумму по реквизитам счёта и сообщите в чате идентификатор транзакции.</p></li><li class="step"><span class="step-number">04</span><h2>Подтверждаем и выдаём</h2><p>Оператор вручную проверит поступление. После подтверждения передадим доступы или начнём подключение на согласованных условиях.</p></li></ol></div><aside class="detail-aside"><Icon name="wallet"/><h2>Сначала — договорённость</h2><p>Адрес и сумма приходят в персональном счёте. Отправляйте оплату после согласования заказа с оператором.</p><ChatButton label="Обсудить оплату" text="Здравствуйте! Хочу уточнить стоимость услуг и оплату криптовалютой."/></aside></div>{page?.body && <div class="terms"><BodyText text={page.body}/></div>}{settings.paymentTerms && <section class="terms"><h2>Условия оплаты</h2><BodyText text={settings.paymentTerms}/></section>}{settings.refundTerms && <section class="terms"><h2>Условия возврата</h2><BodyText text={settings.refundTerms}/></section>}</div></section>
+  <CTABand title="От задачи — к решению." description="Начните с сообщения. Согласуем услуги и способ оплаты, который вам подходит."/>
+</SiteLayout>

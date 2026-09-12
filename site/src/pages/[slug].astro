@@ -1,0 +1,32 @@
+---
+import { env } from 'cloudflare:workers';
+import SiteLayout from '../layouts/SiteLayout.astro';
+import BodyText from '../components/BodyText.astro';
+import ChatButton from '../components/ChatButton.astro';
+import CTABand from '../components/CTABand.astro';
+import Icon from '../components/Icon.astro';
+import { getSiteData } from '../lib/content';
+const { pages, settings } = await getSiteData(env);
+const page = pages.find(page => page.slug === Astro.params.slug);
+if (!page) return Astro.rewrite('/404');
+const isHass = page.slug === 'hass';
+const isEttinger = page.slug === 'ettinger';
+const isRent = page.slug === 'rent';
+const service = isHass || isEttinger || isRent;
+const features = isHass ? [
+  ['shield','Защита трафика','Обсудим защиту от DDoS и блокировок, особенности вашего сервиса и схему подключения.'],
+  ['globe','Доступность сервисов','Подберём подход к маршрутизации и стабильной работе вашей инфраструктуры.'],
+  ['layers','Единый подход','Согласуем требования, подключение и поддержку в рамках одной задачи.']
+] : [
+  ['globe','Массовые операции','Закупки доменов и серверов — с учётом нужного объёма и географии.'],
+  ['cpu','ИИ-адаптеры','Интеграции и автоматизация повторяющихся действий вашей команды.'],
+  ['layers','Рабочие процессы','Автоматизация NIC.RU и связанных операций в одной экосистеме.']
+];
+---
+<SiteLayout title={page.title} description={page.summary} settings={settings}>
+  <div class="container page-heading"><nav class="breadcrumbs" aria-label="Навигационная цепочка"><a href="/">Главная</a><span aria-hidden="true">/</span><span aria-current="page">{page.title}</span></nav></div>
+  <section class:list={['container',service ? 'product-hero' : 'section-compact']}><div><h1>{page.title}</h1><p class="page-lead">{page.summary}</p><BodyText text={page.body}/><ChatButton label={isRent ? 'Обсудить аренду' : 'Обсудить подключение'} text={`Здравствуйте! Интересует ${page.title}. Расскажите об условиях.`}/></div>{service && <img class:list={['product-hero-image',{'landscape':isRent}]} src={isRent ? '/assets/img/rent-card-600.webp' : '/assets/img/avocado-cutout.webp'} srcset={isRent ? '/assets/img/rent-card-600.webp 600w, /assets/img/rent-card-768.webp 768w, /assets/img/rent-card.webp 941w' : '/assets/img/avocado-cutout-512.webp 512w, /assets/img/avocado-cutout-640.webp 640w, /assets/img/avocado-cutout-960.webp 960w, /assets/img/avocado-cutout.webp 1254w'} sizes={isRent ? "(max-width: 760px) calc(100vw - 40px), 40vw" : "(max-width: 359px) calc(100vw - 40px), (max-width: 760px) 320px, 40vw"} fetchpriority="high" width={isRent ? 600 : 1254} height={isRent ? 1066 : 1254} alt={isRent ? 'Золотая дорога поднимается к луне среди тёмных гор' : 'Авокадо с сияющей золотой косточкой'} decoding="async"/>}</section>
+  {(isHass || isEttinger) && <><section class="section section-line"><div class="container"><div class="section-head"><h2>{isHass ? 'Когда сервис\nдолжен быть доступен.' : 'Меньше рутины.\nБольше движения.'}</h2></div><div class="simple-facts">{features.map(([icon,title,description]) => <div class="fact"><Icon name={icon}/><h3>{title}</h3><p>{description}</p></div>)}</div></div></section><section class="section section-line"><div class="container"><div class="section-head"><h2>От задачи к подключению.</h2></div><ol class="steps"><li class="step"><span class="step-number">01</span><h3>Расскажите о проекте</h3><p>Опишите сервисы, текущую инфраструктуру и задачи, которые хотите решить.</p></li><li class="step"><span class="step-number">02</span><h3>Согласуем решение</h3><p>Обсудим состав услуг, технические детали, сроки и стоимость.</p></li><li class="step"><span class="step-number">03</span><h3>Поможем начать</h3><p>После согласования и оплаты перейдём к подключению. Продолжим общение в чате.</p></li></ol></div></section></>}
+  {isRent && <section class="section section-line"><div class="container"><div class="section-head"><div><h2>Выберите свой горизонт.</h2><p>Стоимость зависит от срока и задачи. Состав возможностей согласуем до начала аренды.</p></div></div><div class="rent-options">{[['1 месяц','Начните с задач, которые нужно решить сейчас.'],['3 месяца','Настройте процессы и оцените результат в работе.'],['12 месяцев','Обсудите длительную работу вашей команды с панелью.']].map(([term,description]) => <article class="rent-option"><h3>{term}</h3><div class="product-price">По запросу</div><p>{description}</p><ChatButton variant="secondary" label="Уточнить стоимость" text={`Здравствуйте! Хочу арендовать панель Avocado на ${term}. Расскажите об условиях и стоимости.`}/></article>)}</div><p class="rent-note">Нужен другой срок или несколько панелей? Обсудим индивидуальные условия в чате.</p></div></section>}
+  <CTABand title={isRent ? 'Возможности Avocado.\nВ вашей команде.' : 'Обсудим вашу задачу.'} text={`Здравствуйте! Хочу узнать больше о ${page.title}.`}/>
+</SiteLayout>

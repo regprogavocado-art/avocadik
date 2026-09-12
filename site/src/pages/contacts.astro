@@ -1,0 +1,17 @@
+---
+import { env } from 'cloudflare:workers';
+import SiteLayout from '../layouts/SiteLayout.astro';
+import PageHeading from '../components/PageHeading.astro';
+import ChatButton from '../components/ChatButton.astro';
+import BodyText from '../components/BodyText.astro';
+import Icon from '../components/Icon.astro';
+import { getSiteData } from '../lib/content';
+const { pages, settings } = await getSiteData(env);
+const page = pages.find(page => page.slug === 'contacts');
+if (!page) return Astro.rewrite('/404');
+const telegramUrl = /^https:\/\/t\.me\/[a-zA-Z0-9_/?=&%-]+$/.test(settings.telegramUrl || '') ? settings.telegramUrl : 'https://t.me/avogurubot';
+---
+<SiteLayout title={page?.title || 'Контакты'} description={page?.summary} settings={settings}>
+  <PageHeading title={page?.title || 'Контакты'} description={page?.summary || 'Новая задача, вопрос по услугам или помощь с подключением. Начните там, где вам удобно.'}/>
+  <section class="section"><div class="container"><div class="contact-grid"><div class="contact-main"><Icon name="telegram"/><h2>Расскажите о проекте.</h2><p>Напишите прямо здесь. Ваше сообщение получит оператор — ответ появится в этом же чате.</p><ChatButton label="Открыть чат"/><p>Оставьте Telegram или почту в чате, чтобы мы могли продолжить разговор, если вы закроете страницу.</p></div><div class="contact-other"><div class="contact-line"><h2>Telegram</h2><p>Вопросы по услугам, заявки и поддержка.</p><a class="text-link" href={telegramUrl} target="_blank" rel="noopener noreferrer">Открыть диалог в Telegram <Icon name="arrow"/></a></div>{settings.email && <div class="contact-line"><h2>Почта</h2><a class="text-link" href={`mailto:${settings.email}`}>{settings.email}<Icon name="mail"/></a></div>}<div class="contact-line"><h2>Что написать</h2><p>Услуга, задача, желаемая страна и срок. Если пока не определились — поможем с выбором.</p></div></div></div>{page?.body && <div class="terms"><BodyText text={page.body}/></div>}</div></section>
+</SiteLayout>

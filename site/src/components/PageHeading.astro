@@ -1,0 +1,10 @@
+---
+interface Props { title: string; description?: string; parent?: {href:string;label:string}; }
+const { title, description, parent } = Astro.props;
+---
+<section class="page-heading container">
+  <nav class="breadcrumbs" aria-label="Навигационная цепочка"><a href="/">Главная</a><span aria-hidden="true">/</span>{parent && <><a href={parent.href}>{parent.label}</a><span aria-hidden="true">/</span></>}<span aria-current="page">{title}</span></nav>
+  <h1>{title}</h1>
+  {description && <p class="page-lead">{description}</p>}
+  <slot />
+</section>

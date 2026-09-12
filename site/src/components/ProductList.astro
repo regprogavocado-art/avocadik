@@ -1,0 +1,8 @@
+---
+import type { Product, Country } from '../lib/content';
+import ChatButton from './ChatButton.astro';
+import { availabilityLabels } from './catalog';
+interface Props { products: Product[]; countries?: Country[]; }
+const { products, countries = [] } = Astro.props;
+---
+<div class="product-list">{products.map(product => <article class="product-row"><div><span class:list={['status', `status-${product.availability}`]}>{availabilityLabels[product.availability] || 'По запросу'}</span><h3><a href={`/catalog/${encodeURIComponent(product.category)}/${encodeURIComponent(product.slug)}`}>{product.title}</a></h3><p>{product.summary}</p>{product.countryCodes.length > 0 && <div class="product-country">{product.countryCodes.map(code => countries.find(country => country.code === code)?.name || code).join(' · ')}</div>}</div><div class="product-price">{product.price ? `${product.price} ${product.priceCurrency}` : 'По запросу'}<small>{product.availability === 'soon' ? 'Готовится к запуску' : 'Условия в чате'}</small></div><ChatButton variant="secondary" label={product.availability === 'soon' ? 'Узнать о запуске' : 'Уточнить условия'} text={`Здравствуйте! Интересует ${product.title}. ${product.availability === 'soon' ? 'Расскажите о планах запуска.' : 'Подскажите наличие и условия.'}`} /></article>)}</div>

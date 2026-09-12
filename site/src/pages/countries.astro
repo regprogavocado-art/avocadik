@@ -1,0 +1,18 @@
+---
+import { env } from 'cloudflare:workers';
+import SiteLayout from '../layouts/SiteLayout.astro';
+import PageHeading from '../components/PageHeading.astro';
+import ChatButton from '../components/ChatButton.astro';
+import BodyText from '../components/BodyText.astro';
+import CTABand from '../components/CTABand.astro';
+import Icon from '../components/Icon.astro';
+import { getSiteData } from '../lib/content';
+const { pages, countries, settings } = await getSiteData(env);
+const page = pages.find(page => page.slug === 'countries');
+if (!page) return Astro.rewrite('/404');
+---
+<SiteLayout title={page?.title || 'Страны'} description={page?.summary} settings={settings}>
+  <PageHeading title={page?.title || 'Страны'} description={page?.summary || 'География под задачи проекта. Подберём размещение с учётом нужной локации и конфигурации.'}/>
+  <section class="section"><div class="container">{countries.length ? <div class="country-list">{countries.map(country => <article class="country-item"><span class="country-code">{country.code}</span><div><h2>{country.name}</h2><ChatButton variant="text" label="Уточнить наличие" text={`Здравствуйте! Интересуют услуги в стране ${country.name}. Подскажите доступные варианты.`}/></div></article>)}</div> : <div class="empty-state"><Icon name="globe"/><h2>Нужна определённая локация?</h2><p>Доступные страны и конфигурации уточняем по запросу. Напишите, где хотите разместить проект, — обсудим варианты.</p><ChatButton label="Подобрать размещение" text="Здравствуйте! Хочу подобрать страну размещения для проекта."/></div>}{page?.body && <div class="terms"><BodyText text={page.body}/></div>}</div></section>
+  <CTABand />
+</SiteLayout>

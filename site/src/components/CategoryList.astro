@@ -1,0 +1,11 @@
+---
+import { categories } from './catalog';
+import Icon from './Icon.astro';
+import type { Page, Product } from '../lib/content';
+interface Props { compact?: boolean; pages?: Page[]; products?: Product[]; }
+const { compact = false, pages, products = [] } = Astro.props;
+const Heading = compact ? 'h3' : 'h2';
+const visible = categories.filter(category => !pages || pages.some(page => page.slug === `category-${category.slug}`));
+const status = (slug: string) => { const matches = products.filter(product => product.category === slug); return matches.some(product => product.availability === 'available') ? 'available' : (slug === 'bulletproof' || (matches.length > 0 && matches.every(product => product.availability === 'soon'))) ? 'soon' : 'on_request'; };
+---
+<div class="catalog-list">{visible.map(category => <a class="catalog-row" href={`/catalog/${category.slug}`}><Icon name={category.icon}/><Heading>{pages?.find(page => page.slug === `category-${category.slug}`)?.title || category.title}</Heading>{!compact && <p>{category.short}</p>}<span class:list={['status', `status-${status(category.slug)}`]}>{status(category.slug) === 'soon' ? 'Скоро' : status(category.slug) === 'available' ? 'В наличии' : 'По запросу'}</span><Icon name="arrow"/></a>)}</div>

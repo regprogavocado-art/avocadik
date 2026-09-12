@@ -1,0 +1,6 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import Icon from '../components/Icon.astro';
+Astro.response.status = 404;
+---
+<SiteLayout title="Страница не найдена" noindex><section class="container not-found"><h1>Этот путь<br/>пока не проложен.</h1><p>Страница не найдена. Вернитесь на главную или выберите услугу в каталоге.</p><a class="button button-primary" href="/">На главную <Icon name="arrow"/></a></section></SiteLayout>

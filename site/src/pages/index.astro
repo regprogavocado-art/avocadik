@@ -1,0 +1,28 @@
+---
+import { env } from 'cloudflare:workers';
+import SiteLayout from '../layouts/SiteLayout.astro';
+import Icon from '../components/Icon.astro';
+import ChatButton from '../components/ChatButton.astro';
+import CategoryList from '../components/CategoryList.astro';
+import CTABand from '../components/CTABand.astro';
+import BodyText from '../components/BodyText.astro';
+import { getSiteData } from '../lib/content';
+const { pages, products, settings } = await getSiteData(env);
+const page = pages.find(page => page.slug === 'home');
+if (!page) return Astro.rewrite('/404');
+const headlineBreak = page.title.indexOf(',');
+const hass = pages.find(page => page.slug === 'hass');
+const ettinger = pages.find(page => page.slug === 'ettinger');
+const rent = pages.find(page => page.slug === 'rent');
+---
+<SiteLayout title={page?.title || 'Инфраструктура для ваших задач'} description={page?.summary} settings={settings} hero>
+  <section class="hero">
+    <div class="hero-visual" aria-hidden="true"><img src="/assets/img/hero-scene.webp" srcset="/assets/img/hero-scene-800.webp 800w, /assets/img/hero-scene.webp 1254w" sizes="(max-width: 760px) 100vw, 60vw" width="1254" height="1254" fetchpriority="high" decoding="async" alt=""/><div class="hero-note"><p>Больше возможностей<br/>сегодня.<br/>Свобода завтра.</p><small>AVOCADO.REST</small></div></div>
+    <div class="hero-inner container"><div class="hero-copy"><h1>{headlineBreak > 0 ? <>{page.title.slice(0,headlineBreak + 1)}<span class="accent">{page.title.slice(headlineBreak + 1).trim()}</span></> : page.title}</h1><p class="hero-lead">{page.summary}</p><div class="hero-actions"><ChatButton label="Обсудить проект" text="Здравствуйте! Хочу подобрать инфраструктуру для своего проекта."/><a class="text-link" href="/catalog">Перейти в каталог <Icon name="arrow"/></a></div><p class="hero-caption">Одна экосистема. От первой задачи до масштабирования.</p></div></div>
+  </section>
+  <section class="section section-line"><div class="container"><div class="section-head"><div><h2>Два продукта.<br/>Больше возможностей.</h2><p>Защищайте то, что важно. Автоматизируйте то, что повторяется.</p></div></div><div class="solutions-grid">{hass && <article class="solution"><div class="solution-head"><h3>{hass.title}</h3><Icon name="shield"/></div><p>{hass.summary}</p><p class="solution-detail">{hass.body.split(/\r?\n\s*\r?\n/)[0]}</p><ul><li><Icon name="check"/>Защита от DDoS</li><li><Icon name="check"/>Защита трафика</li><li><Icon name="check"/>Аналитика</li></ul><a class="text-link" href="/hass">Подробнее о Hass <Icon name="arrow"/></a></article>}{ettinger && <article class="solution solution-gold"><div class="solution-head"><h3>{ettinger.title}</h3><Icon name="layers"/></div><p>{ettinger.summary}</p><p class="solution-detail">{ettinger.body.split(/\r?\n\s*\r?\n/)[0]}</p><ul><li><Icon name="check"/>Массовые закупки</li><li><Icon name="check"/>ИИ-адаптеры</li><li><Icon name="check"/>Автоматизация</li></ul><a class="text-link" href="/ettinger">Подробнее об Ettinger <Icon name="arrow"/></a></article>}</div></div></section>
+  <section class="section section-line"><div class="container catalog-visual"><div class="catalog-intro"><h2>Основа сильного<br/>проекта.</h2><p>От доменного имени до выделенного сервера. Подберём ресурсы под нагрузку, географию и планы вашей команды.</p><a class="text-link" href="/catalog">Весь каталог <Icon name="arrow"/></a><img class="catalog-intro-cutout" src="/assets/img/avocado-cutout-512.webp" width="512" height="512" loading="lazy" decoding="async" alt=""/></div><CategoryList compact pages={pages} products={products}/></div></section>
+  {rent && <section class="section section-line"><div class="container"><div class="rent-feature"><div class="rent-feature-copy"><p class="section-label">Аренда панели</p><h2>Ваш рабочий<br/>инструмент.<br/><span class="accent">На нужный срок.</span></h2><p>{rent.summary}. Hass и Ettinger в одной экосистеме. Условия и стоимость — под задачи вашей команды.</p><a class="button button-secondary" href="/rent">Об аренде панели <Icon name="arrow"/></a></div><img class="rent-feature-image" src="/assets/img/rent-card-600.webp" width="600" height="1066" alt="Золотая дорога среди ночных гор" loading="lazy" decoding="async"/></div></div></section>}
+  <section class="section section-line"><div class="container"><div class="section-head"><div><h2>Начинается с разговора.</h2><p>Без сложного брифа и лишних шагов. Обсудим задачу и предложим следующий шаг.</p></div><a class="text-link" href="/payment">Как проходит оплата <Icon name="arrow"/></a></div><div class="simple-facts"><div class="fact"><Icon name="route"/><h3>Под вашу задачу</h3><p>Подбираем конфигурацию, размещение и набор услуг в одном диалоге.</p></div><div class="fact"><Icon name="wallet"/><h3>Оплата криптовалютой</h3><p>Согласуем валюту и сеть. Получите персональный счёт перед оплатой.</p></div><div class="fact"><Icon name="telegram"/><h3>На связи в чате</h3><p>Начните на сайте или в Telegram. Поможем с выбором и подключением.</p></div></div>{page?.body && <div class="terms"><BodyText text={page.body}/></div>}</div></section>
+  <CTABand />
+</SiteLayout>

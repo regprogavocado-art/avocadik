@@ -1,0 +1,17 @@
+---
+import { env } from 'cloudflare:workers';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import PageHeading from '../../components/PageHeading.astro';
+import CategoryList from '../../components/CategoryList.astro';
+import CTABand from '../../components/CTABand.astro';
+import BodyText from '../../components/BodyText.astro';
+import { getSiteData } from '../../lib/content';
+const { pages, products, settings } = await getSiteData(env);
+const page = pages.find(page => page.slug === 'catalog');
+if (!page) return Astro.rewrite('/404');
+---
+<SiteLayout title={page?.title || 'Каталог'} description={page?.summary} settings={settings}>
+  <PageHeading title={page?.title || 'Каталог'} description={page?.summary || 'Инфраструктура под ваш проект. Выберите направление — детали, наличие и стоимость обсудим в чате.'}/>
+  <section class="section"><div class="container"><CategoryList pages={pages} products={products}/>{page?.body && <div class="terms"><BodyText text={page.body}/></div>}</div></section>
+  <CTABand title="Подберём то,\nчто нужно проекту." />
+</SiteLayout>

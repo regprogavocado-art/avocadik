@@ -1,0 +1,6 @@
+---
+interface Props { text?: string; }
+const { text = '' } = Astro.props;
+const paragraphs = text.replace(/ИИ-/g, 'ИИ-\u2060').split(/\r?\n\s*\r?\n/).map(p => p.trim()).filter(Boolean);
+---
+<div class="prose">{paragraphs.map(paragraph => <p class="plain-text">{paragraph}</p>)}</div>

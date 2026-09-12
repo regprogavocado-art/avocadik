@@ -1,0 +1,20 @@
+---
+import { env } from 'cloudflare:workers';
+import SiteLayout from '../../../layouts/SiteLayout.astro';
+import PageHeading from '../../../components/PageHeading.astro';
+import BodyText from '../../../components/BodyText.astro';
+import ChatButton from '../../../components/ChatButton.astro';
+import CTABand from '../../../components/CTABand.astro';
+import { categories, availabilityLabels, safeImage, categorySrcSet } from '../../../components/catalog';
+import { getSiteData } from '../../../lib/content';
+const { products, countries, settings } = await getSiteData(env);
+const product = products.find(product => product.category === Astro.params.category && product.slug === Astro.params.slug);
+if (!product) return Astro.rewrite('/404');
+const category = categories.find(category => category.slug === product.category);
+const image = safeImage(product.image);
+---
+<SiteLayout title={product.title} description={product.summary} settings={settings}>
+  <PageHeading title={product.title} description={product.summary} parent={{href:`/catalog/${product.category}`,label:category?.title || 'Каталог'}}/>
+  <section class="section"><div class="container category-detail"><div>{image && <img class="category-render" src={image} srcset={categorySrcSet(image)} sizes="(max-width: 760px) 100vw, 55vw" width="1600" height="900" loading="lazy" decoding="async" alt={product.title}/>}<BodyText text={product.body}/>{product.countryCodes.length > 0 && <div class="terms"><h2>Размещение</h2><p>{product.countryCodes.map(code => countries.find(country => country.code === code)?.name || code).join(' · ')}</p></div>}</div><aside class="detail-aside"><span class:list={['status',`status-${product.availability}`]}>{availabilityLabels[product.availability]}</span><h2>{product.price ? `${product.price} ${product.priceCurrency}` : 'Цена по запросу'}</h2><p>Уточним конфигурацию, наличие и условия до выставления счёта.</p><ChatButton label={product.availability === 'soon' ? 'Узнать о запуске' : 'Обсудить заказ'} text={`Здравствуйте! Интересует ${product.title}. Подскажите условия.`}/></aside></div></section>
+  <CTABand />
+</SiteLayout>

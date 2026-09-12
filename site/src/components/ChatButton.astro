@@ -1,0 +1,6 @@
+---
+import Icon from './Icon.astro';
+interface Props { text?: string; label?: string; variant?: 'primary'|'secondary'|'text'; class?: string; }
+const { text = '', label = 'Обсудить задачу', variant = 'primary', class: className = '' } = Astro.props;
+---
+<button type="button" class:list={['button', `button-${variant}`, className]} data-chat={text}>{label}<Icon name="arrow" /></button>
