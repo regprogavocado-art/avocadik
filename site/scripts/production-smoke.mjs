@@ -176,7 +176,7 @@ async function main() {
 try {
   await main();
   report.ok = true;
-  console.log('Production smoke passed: 15 public routes, admin protection, read-only chat GET, Telegram webhook' + (report.admin.requested ? ', admin login/read/logout.' : '.'));
+  console.log(`Production smoke passed: ${routes.length} public routes, admin protection, read-only chat GET, Telegram webhook` + (report.admin.requested ? ', admin login/read/logout.' : '.'));
   console.log(JSON.stringify({ telegram: report.telegram, admin: report.admin }));
 } catch (error) {
   report.ok = false;
