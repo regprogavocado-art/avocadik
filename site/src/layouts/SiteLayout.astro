@@ -16,7 +16,7 @@ const { title = 'Инфраструктура для ваших задач', des
 const pageTitle = `${title} — Avocado`;
 const base = import.meta.env.PUBLIC_SITE_URL || Astro.site?.toString() || Astro.url.origin;
 const canonical = new URL(Astro.url.pathname, base).href;
-const ogImage = new URL('/assets/og.png', base).href;
+const ogImage = new URL('/assets/og.png', Astro.url.origin).href;
 const navItems = [ ['/catalog', 'Каталог'], ['/hass', 'Hass'], ['/ettinger', 'Ettinger'], ['/rent', 'Аренда'], ['/news', 'Новости'] ];
 const active = (href: string) => Astro.url.pathname === href || Astro.url.pathname.startsWith(`${href}/`);
 const telegramUrl = /^https:\/\/t\.me\/[a-zA-Z0-9_/?=&%-]+$/.test(settings.telegramUrl || '') ? settings.telegramUrl! : 'https://t.me/avogurubot';
