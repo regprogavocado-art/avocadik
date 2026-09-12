@@ -47,7 +47,7 @@ if(action==='prepare'){
  const secrets=await productionSecrets();
  const buckets=await mediaAvailable();let mediaReady=buckets!==null;
  if(mediaReady&&!buckets.some(bucket=>bucket.name==='avocado-media'))await api(account+'/r2/buckets','POST',{name:'avocado-media'});
- const env_vars={PUBLIC_SITE_URL:{type:'plain_text',value:'https://avocado.rest'},CHAT_WORKER_URL:{type:'plain_text',value:'https://avocado-chat.avocado-chat-worker.workers.dev'},...Object.fromEntries(Object.entries(secrets).map(([key,value])=>[key,{type:'secret_text',value}]))};
+ const env_vars={PUBLIC_SITE_URL:{type:'plain_text',value:'https://avocado.rest'},PUBLIC_PUBLISH_MODE:{type:'plain_text',value:'github'},CHAT_WORKER_URL:{type:'plain_text',value:'https://avocado-chat.avocado-chat-worker.workers.dev'},...Object.fromEntries(Object.entries(secrets).map(([key,value])=>[key,{type:'secret_text',value}]))};
  const config={compatibility_date:'2026-09-12',compatibility_flags:['nodejs_compat'],env_vars,d1_databases:{DB:{id:'31b29b96-d036-45d1-9143-7233069154e2'}},services:{CHAT_SERVICE:{service:'avocado-chat',environment:'production'}},r2_buckets:mediaReady?{NEWS_MEDIA:{name:'avocado-media'}}:{}};
  const projects=await api(account+'/pages/projects');let project=projects.find(item=>item.name==='avocado-rest');
  if(!project)project=await api(account+'/pages/projects','POST',{name:'avocado-rest',production_branch:'main',deployment_configs:{production:config,preview:config}});

@@ -33,7 +33,7 @@ try {
       {...shared,name:siteName,modules:appModules,modulesRoot:appRoot,
         assets:{directory:assetSnapshot,binding:'ASSETS',run_worker_first:true,routerConfig:{has_user_worker:true}},
         serviceBindings:{CHAT_SERVICE:chatName},
-        bindings:{ADMIN_PASSWORD_HASH:localSecrets.ADMIN_PASSWORD_HASH,SESSION_SECRET:localSecrets.SESSION_SECRET,ADMIN_API_SECRET:localSecrets.ADMIN_API_SECRET,CHAT_WORKER_URL:'https://local-chat.invalid',PUBLIC_SITE_URL:'http://127.0.0.1:4322'}},
+        bindings:{ADMIN_PASSWORD_HASH:localSecrets.ADMIN_PASSWORD_HASH,SESSION_SECRET:localSecrets.SESSION_SECRET,ADMIN_API_SECRET:localSecrets.ADMIN_API_SECRET,CHAT_WORKER_URL:'https://local-chat.invalid',PUBLIC_SITE_URL:'http://127.0.0.1:4322',PUBLIC_PUBLISH_MODE:'github'}},
       {...shared,name:chatName,modules:chatModules,modulesRoot:chatRoot,unsafeDirectSockets:[{host:'127.0.0.1',port:4331}],
         bindings:{ALLOWED_ORIGINS:'https://avocado.rest,http://127.0.0.1:4322',TELEGRAM_API_BASE:'http://127.0.0.1:8099',TELEGRAM_BOT_TOKEN:'fake-test-token',ADMIN_CHAT_ID:'777',WEBHOOK_SECRET:'localsecret-0123456789abcdef',ADMIN_API_SECRET:localSecrets.ADMIN_API_SECRET,IP_SALT:'local-test-ip-salt',NEWS_CHANNEL_ID:'-1001234567890'}}
     ]

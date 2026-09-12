@@ -6,6 +6,7 @@ compatibility_flags = ["nodejs_compat"]
 
 [vars]
 PUBLIC_SITE_URL = "https://avocado.rest"
+PUBLIC_PUBLISH_MODE = "github"
 CHAT_WORKER_URL = "https://avocado-chat.avocado-chat-worker.workers.dev"
 
 [[d1_databases]]
