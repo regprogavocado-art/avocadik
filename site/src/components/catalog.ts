@@ -1,3 +1,12 @@
+import {type Product,type PricePeriod} from '../lib/content.ts';
+export const pricePeriodLabels: Record<PricePeriod,string> = {month:'мес.',year:'год','30_days':'30 дней',once:'разово'};
+export function formatProductPrice(product:Pick<Product,'price'|'priceCurrency'|'pricePeriod'>,empty='По запросу'):string {
+  if(!product.price)return empty;
+  // Keep the stored decimal string exact; no currency conversion or binary rounding.
+  const amount=product.price.replace('.',',');
+  const period=product.pricePeriod?pricePeriodLabels[product.pricePeriod]:undefined;
+  return `${amount} ${product.priceCurrency}${period?` / ${period}`:''}`;
+}
 export const categories = [
   { slug: 'domains', title: 'Домены', icon: 'globe', short: 'Адрес вашего проекта', description: 'Подбор и регистрация доменов. Одна задача или массовая закупка — обсудим нужные зоны и объём.', details: ['Выбор доменной зоны', 'Регистрация и продление', 'Массовые операции'], image: '/assets/img/category-domains.webp' },
   { slug: 'vps', title: 'VPS', icon: 'cpu', short: 'Ресурсы для роста', description: 'Виртуальные серверы под приложения, сервисы и рабочие процессы. Конфигурация и локация под вашу нагрузку.', details: ['CPU, память и диски под нагрузку', 'Выбор страны размещения', 'Условия масштабирования'], image: '/assets/img/category-vps.webp' },

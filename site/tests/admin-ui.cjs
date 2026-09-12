@@ -55,6 +55,7 @@ async function capture(page, label, width, check = true) {
   await page.setViewportSize({ width, height: width === 1440 ? 1000 : 844 });
   await page.evaluate(() => document.fonts.ready);
   await page.screenshot({ path: path.join(output, `${label}-${width}.png`), fullPage: true });
+  if (label === 'product-edit') await page.locator('input[name="price"]').scrollIntoViewIfNeeded();
   await page.screenshot({ path: path.join(output, `${label}-${width}-viewport.png`), fullPage: false });
   if (!check) return;
   const overflow = await page.evaluate(() => ({ client: document.documentElement.clientWidth, scroll: document.documentElement.scrollWidth }));
@@ -171,11 +172,25 @@ async function cleanup() {
     await form.getByLabel('Название', { exact: true }).fill(`${prefix} — VPS`); await form.getByLabel('Адрес', { exact: true }).fill(fixtures.productSlug);
     await form.getByLabel('Категория', { exact: true }).selectOption('vps'); await form.getByLabel('Краткое описание', { exact: true }).fill('Тестовая услуга, только локальная база.');
     await form.getByLabel('Описание', { exact: true }).fill('Не предназначено для продажи.'); await form.getByLabel('Цена', { exact: true }).fill('12.34');
+    await form.getByLabel('Период цены', { exact: true }).selectOption('month');
+    await form.getByLabel('Примечание к цене', { exact: true }).fill('Предварительный ориентир · локальная проверка');
+    await form.getByLabel('Название источника', { exact: true }).fill('Проверочный источник');
+    await form.getByLabel('Ссылка на источник', { exact: true }).fill('https://example.com/prices');
+    await form.getByLabel('Дата проверки источника', { exact: true }).fill('2026-09-12');
     await form.getByLabel('Наличие', { exact: true }).selectOption('on_request'); await form.getByLabel('Локальная тестовая страна', { exact: true }).check();
     await form.getByLabel('Публикация', { exact: true }).selectOption('published'); await submit(form);
     fixtures.productId = await openRow('products', `${prefix} — VPS`);
+    assert.equal(await mainForm('products').getByLabel('Период цены', { exact:true }).inputValue(),'month');
+    assert.equal(await mainForm('products').getByLabel('Название источника', { exact:true }).inputValue(),'Проверочный источник');
+    assert.equal(await mainForm('products').getByLabel('Ссылка на источник', { exact:true }).inputValue(),'https://example.com/prices');
+    assert.equal(await mainForm('products').getByLabel('Дата проверки источника', { exact:true }).inputValue(),'2026-09-12');
     await mainForm('products').getByLabel('Наличие', { exact: true }).selectOption('available'); await submit(mainForm('products'));
     await go(visitor, `/catalog/vps/${fixtures.productSlug}`); assert.ok(await visitor.getByText('В наличии', { exact: true }).first().isVisible());
+    assert.ok(await visitor.getByRole('heading', { name:'12,34 USD / мес.', exact:true }).isVisible());
+    assert.ok(await visitor.getByText('Предварительный ориентир · локальная проверка', { exact:true }).isVisible());
+    assert.equal(await visitor.getByRole('link', { name:'Проверочный источник', exact:true }).count(),0);
+    assert.ok(!(await visitor.content()).includes('https://example.com/prices'));
+    assert.equal(await visitor.locator('.price-source').count(),0);
     await go(admin, `/admin/products?edit=${fixtures.productId}`); for (const width of [1440, 390]) await capture(admin, 'product-edit', width);
 
     // Wallet addresses are intentionally invalid as real addresses; no chain/processors are contacted.
@@ -219,7 +234,7 @@ async function cleanup() {
     // Chat runs against the local Pages proxy and local mock only.
     await go(visitor, '/'); const cfg = await visitor.evaluate(() => window.AVOCADO_CONFIG);
     assert.ok(loopback(cfg.chatApiBase), 'The browser chat endpoint must remain local.');
-    await visitor.locator('[data-chat]').filter({ hasText: 'Обсудить проект' }).first().click(); await visitor.locator('.ac-panel[aria-hidden="false"]').waitFor();
+    await visitor.locator('[data-chat]').first().click(); await visitor.locator('.ac-panel[aria-hidden="false"]').waitFor();
     await visitor.locator('.ac-intro input[name="name"]').fill(`${prefix} — посетитель`); await visitor.locator('.ac-intro input[name="contact"]').fill('local-test@example.invalid');
     const message = `${prefix}: проверка чата без реальной отправки.`, reply = `${prefix}: ответ из админки получен.`;
     await visitor.locator('.ac-form textarea').fill(message); const sent = visitor.waitForResponse(response => response.request().method() === 'POST' && /\/api\/chat\/[^/]+\/messages/.test(response.url()));

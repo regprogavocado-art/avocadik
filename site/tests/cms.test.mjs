@@ -10,6 +10,7 @@ function database() {
   sqlite.exec(readFileSync(new URL('../migrations/0001_cms.sql',import.meta.url),'utf8'));
   sqlite.exec(readFileSync(new URL('../migrations/0002_seed.sql',import.meta.url),'utf8'));
   sqlite.exec(readFileSync(new URL('../migrations/0003_chat_baseline.sql',import.meta.url),'utf8'));
+  sqlite.exec(readFileSync(new URL('../migrations/0004_product_pricing.sql',import.meta.url),'utf8'));
   const DB={prepare(sql){const stmt=sqlite.prepare(sql);let args=[];return {bind(...values){args=values;return this},async first(){return stmt.get(...args)||null},async all(){return {results:stmt.all(...args)}},async run(){const r=stmt.run(...args);return {meta:{changes:Number(r.changes)}}}}},async batch(statements){sqlite.exec('BEGIN');try{const results=[];for(const stmt of statements)results.push(await stmt.run());sqlite.exec('COMMIT');return results}catch(error){sqlite.exec('ROLLBACK');throw error}}};
   return {sqlite,DB};
 }
@@ -32,6 +33,41 @@ test('all admin sections render against a freshly migrated empty chat database',
     const page=await renderAdmin(section,{DB},session,new URL(`https://example.test/admin/${section}`));
     assert.ok(page.html.length>0);assert.notEqual(page.title,'Страница не найдена');
   }
+});
+
+test('product pricing survives edits while supplier sources stay restricted to the admin',async()=>{
+  const {DB,sqlite}=database();
+  const fields={slug:'source-priced-proxy',title:'IPv4',category:'proxies',summary:'Пример',body:'Условия по запросу',price:'1.77',priceCurrency:'USD',pricePeriod:'30_days',priceNote:'За 1 IP · ориентир',sourceName:'Private procurement',sourceUrl:'https://example.com/prices',sourceCheckedAt:'2026-09-12',availability:'on_request',status:'published'};
+  const result=await mutate('products',request,{DB},form(fields),session);
+  assert.equal(result.headers.get('location'),'/admin/products?saved=1');
+  let product=(await getSiteData({DB})).products.find(p=>p.slug===fields.slug);
+  assert.equal(product.price,'1.77');assert.equal(product.priceCurrency,'USD');assert.equal(product.pricePeriod,'30_days');
+  assert.equal(product.priceNote,fields.priceNote);assert.equal(product.sourceName,undefined);assert.equal(product.sourceUrl,undefined);assert.equal(product.sourceCheckedAt,undefined);
+  const stored=sqlite.prepare('SELECT source_name,source_url,source_checked_at FROM cms_products WHERE id=?').get(product.id);
+  assert.equal(stored.source_name,'Private procurement');assert.equal(stored.source_url,fields.sourceUrl);assert.equal(stored.source_checked_at,'2026-09-12');
+  let editor=await renderAdmin('products',{DB},session,new URL(`https://example.test/admin/products?edit=${product.id}`));
+  assert.match(editor.html,/value="30_days" selected/);assert.match(editor.html,/value="https:\/\/example.com\/prices"/);assert.match(editor.html,/value="2026-09-12"/);
+  await mutate('products',request,{DB},form({...fields,id:product.id,price:'4.90',priceCurrency:'EUR',pricePeriod:'month',sourceName:'',sourceUrl:'',sourceCheckedAt:''}),session);
+  product=(await getSiteData({DB})).products.find(p=>p.slug===fields.slug);
+  assert.equal(product.price,'4.90');assert.equal(product.priceCurrency,'EUR');assert.equal(product.pricePeriod,'month');assert.equal(product.sourceUrl,undefined);
+  assert.equal(sqlite.prepare('SELECT source_url FROM cms_products WHERE id=?').get(product.id).source_url,'');
+  assert.equal(sqlite.prepare('SELECT COUNT(*) AS n FROM cms_products WHERE slug=?').get(fields.slug).n,1);
+});
+
+test('product source validation rejects active URLs, credentials, invalid periods and impossible dates before saving',async()=>{
+  const {DB,sqlite}=database();
+  const fields={slug:'source-validation',title:'Проверка',category:'domains',price:'13.00',priceCurrency:'USD',availability:'on_request',status:'draft'};
+  const unsafe=['javascript:alert(1)','data:text/html,test','//example.com/prices','https:example.com','http://example.com','https://user:password@example.com/','https://example.com\\@evil.test/'];
+  for(const sourceUrl of unsafe) {
+    const result=await mutate('products',request,{DB},form({...fields,sourceUrl}),session);assert.match(result.headers.get('location'),/error=/,sourceUrl);
+  }
+  for(const extra of [{pricePeriod:'weekly'},{sourceCheckedAt:'2026-02-30'},{sourceCheckedAt:'2026-2-1'},{priceNote:'x'.repeat(201)}]) {
+    const result=await mutate('products',request,{DB},form({...fields,...extra}),session);assert.match(result.headers.get('location'),/error=/);
+  }
+  assert.equal(sqlite.prepare("SELECT COUNT(*) AS n FROM cms_products WHERE slug='source-validation'").get().n,0);
+  const legacy=await mutate('products',request,{DB},form(fields),session);
+  assert.equal(legacy.headers.get('location'),'/admin/products?saved=1');
+  const row=sqlite.prepare("SELECT price_period,source_url FROM cms_products WHERE slug='source-validation'").get();assert.equal(row.price_period,'');assert.equal(row.source_url,'');
 });
 
 test('news pagination includes pinned posts and excludes hidden/future publications',async()=>{
