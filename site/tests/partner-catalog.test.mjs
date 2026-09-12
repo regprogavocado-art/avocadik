@@ -5,6 +5,7 @@ import {readFileSync} from 'node:fs';
 import {seedPages, mapProduct, publicProduct} from '../src/lib/content.ts';
 
 const migration=readFileSync(new URL('../migrations/0005_partner_catalog.sql',import.meta.url),'utf8');
+const hostingMigration=readFileSync(new URL('../migrations/0006_hosting_navigation.sql',import.meta.url),'utf8');
 function initialDatabase(){
   const db=new DatabaseSync(':memory:');
   for(const file of ['0001_cms.sql','0002_seed.sql','0003_chat_baseline.sql','0004_product_pricing.sql'])
@@ -102,9 +103,10 @@ test('migration preserves existing editor content, draft decisions, generic URLs
   } finally {db.close();}
 });
 
-test('untouched public pages migrate to the same software-first copy as the no-DB fallback',()=>{
+test('untouched public pages migrate to the same hosting copy as the no-DB fallback',()=>{
   const db=initialDatabase();try {
     db.exec(migration);
+    db.exec(hostingMigration);
     assert.equal(db.prepare('SELECT COUNT(*) AS n FROM cms_pages').get().n,15);
     for(const page of seedPages){
       const saved=db.prepare('SELECT title,summary,body,status FROM cms_pages WHERE slug=?').get(page.slug);
@@ -113,11 +115,29 @@ test('untouched public pages migrate to the same software-first copy as the no-D
       assert.doesNotMatch(JSON.stringify(saved),/sourceName|sourceUrl|sourceCheckedAt|партн[её]р|источник/i);
     }
     const home=db.prepare("SELECT * FROM cms_pages WHERE slug='home'").get();
-    assert.equal(home.title,'Разрабатываем ПО. Защищаем ваши возможности.');
+    assert.equal(home.title,'Анонимный хостинг. Инфраструктура под вашим контролем.');
     const ettinger=db.prepare("SELECT * FROM cms_pages WHERE slug='ettinger'").get();
     assert.match(ettinger.body,/наш программный продукт/);
     assert.match(ettinger.body,/дополнительные услуги Avocado/);
   } finally {db.close();}
+});
+
+test('hosting copy migration preserves editorial text, draft state, prices and private configuration',()=>{
+  const db=initialDatabase();try {
+    db.exec(migration);
+    db.exec("UPDATE cms_pages SET title='Свой заголовок',body='Текст владельца' WHERE slug='home'; UPDATE cms_pages SET status='draft' WHERE slug='news';");
+    const ownerPage=db.prepare("SELECT * FROM cms_pages WHERE slug='home'").get();
+    const catalog=db.prepare('SELECT * FROM cms_products ORDER BY id').all();
+    const settings=db.prepare('SELECT * FROM cms_settings ORDER BY key').all();
+    db.exec(hostingMigration);
+    assert.deepEqual(db.prepare("SELECT * FROM cms_pages WHERE slug='home'").get(),ownerPage);
+    assert.equal(db.prepare("SELECT status FROM cms_pages WHERE slug='news'").get().status,'draft');
+    assert.deepEqual(db.prepare('SELECT * FROM cms_products ORDER BY id').all(),catalog);
+    assert.deepEqual(db.prepare('SELECT * FROM cms_settings ORDER BY key').all(),settings);
+    const updated=db.prepare('SELECT * FROM cms_pages ORDER BY id').all();
+    db.exec(hostingMigration);
+    assert.deepEqual(db.prepare('SELECT * FROM cms_pages ORDER BY id').all(),updated);
+  }finally{db.close();}
 });
 
 test('private procurement data remains available to admin mapping and absent from public output',()=>{

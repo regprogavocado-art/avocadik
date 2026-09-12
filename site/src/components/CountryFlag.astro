@@ -1,0 +1,11 @@
+---
+import { countryFlagPath } from '../lib/hosting';
+interface Props { code: string; name?: string; decorative?: boolean; class?: string; }
+const { code, name = code, decorative = false, class: className = '' } = Astro.props;
+const path = countryFlagPath(code);
+---
+{path ? <img class:list={['country-flag', className]} src={path} width="28" height="20" alt={decorative ? '' : name} aria-hidden={decorative || undefined} decoding="async" /> : <span class:list={['country-flag', 'country-flag-fallback', className]} aria-label={decorative ? undefined : name} aria-hidden={decorative || undefined}>{code.toUpperCase()}</span>}
+<style>
+  .country-flag { display: inline-block; width: 28px; height: 20px; object-fit: cover; border-radius: 3px; flex: 0 0 28px; vertical-align: middle; box-shadow: 0 0 0 1px rgba(255,255,255,.12); }
+  .country-flag-fallback { text-align: center; font: 10px/20px monospace; color: currentColor; background: rgba(255,255,255,.06); }
+</style>
