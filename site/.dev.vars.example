@@ -1,0 +1,8 @@
+# Copy to .dev.vars for local work or run node scripts/local-setup.mjs.
+# Configure production secrets via Cloudflare Pages; never commit real values.
+ADMIN_PASSWORD_HASH=""
+SESSION_SECRET=""
+ADMIN_API_SECRET=""
+CHAT_WORKER_URL="http://127.0.0.1:8787"
+PUBLIC_SITE_URL="http://127.0.0.1:4321"
+

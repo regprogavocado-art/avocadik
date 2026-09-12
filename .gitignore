@@ -14,3 +14,24 @@ Thumbs.db
 
 # исходные рендеры (в сайт идут оптимизированные копии из assets/img)
 assets/renders/
+
+# Astro / local CMS state and validation artifacts
+site/node_modules/
+site/.astro/
+site/dist/
+site/pages-dist/
+pages/.dev.vars*
+pages/.wrangler/
+site/public/assets/
+site/public/css/
+site/public/js/
+site/public/favicon*
+site/public/apple-touch-icon.png
+site/.wrangler/
+site/.dev.vars*
+site/.env*
+site/.admin-password-hash
+!site/.dev.vars.example
+!site/.env.example
+site/output/
+output/

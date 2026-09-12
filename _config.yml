@@ -7,3 +7,5 @@ exclude:
   - .gitignore
   - CLAUDE.md
   - NEXT-SESSION-PROMPT.md
+  - site
+  - pages

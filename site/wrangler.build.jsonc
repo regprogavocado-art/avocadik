@@ -1,0 +1,31 @@
+{
+  "name": "avocado-rest-build",
+  "compatibility_date": "2026-09-12",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "vars": {
+    "PUBLIC_SITE_URL": "https://avocado.rest",
+    "CHAT_WORKER_URL": "https://avocado-chat.avocado-chat-worker.workers.dev"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "avocado-chat",
+      "database_id": "31b29b96-d036-45d1-9143-7233069154e2",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "NEWS_MEDIA",
+      "bucket_name": "avocado-media"
+    }
+  ],
+  "services": [
+    {
+      "binding": "CHAT_SERVICE",
+      "service": "avocado-chat"
+    }
+  ]
+}
