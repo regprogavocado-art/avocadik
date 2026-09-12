@@ -354,11 +354,18 @@ svg { display: block; }
 .cta-text p { color: var(--muted); margin-top: 14px; font-size: 1.0625rem; }
 .cta-actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: flex-end; }
 .cta-side .trust { margin-top: 22px; justify-content: flex-end; }
+.cta-tg { margin-top: 16px; text-align: right; color: var(--muted); font-size: .9375rem; }
+.cta-tg a { display: inline-flex; align-items: center; gap: 6px; color: var(--mint); font-weight: 600; min-height: 44px; }
+.cta-tg a .ic { width: 18px; height: 18px; stroke: none; fill: currentColor; }
+.cta-tg a:hover { color: #a3f5b7; text-decoration: underline; text-underline-offset: 3px; }
 
 /* ─── Подвал ───────────────────────────────────────────────────────── */
 .site-footer { padding-block: 32px; }
 .footer-inner { display: flex; align-items: center; gap: 28px; flex-wrap: wrap; }
 .footer-tagline { color: var(--muted); font-size: .875rem; }
+.footer-tg { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 12px; border: 1px solid var(--line-2); border-radius: 999px; color: var(--text); font-size: .875rem; font-weight: 500; transition: border-color .15s, background-color .15s; }
+.footer-tg .ic { width: 18px; height: 18px; stroke: none; fill: currentColor; color: var(--mint); }
+.footer-tg:hover { border-color: rgba(143, 240, 166, .45); background: rgba(143, 240, 166, .06); }
 .footer-nav { display: flex; gap: 4px; margin-left: auto; }
 .footer-nav a { color: var(--muted); font-size: .875rem; padding: 10px 10px; min-height: 44px; display: inline-flex; align-items: center; border-radius: 8px; }
 .footer-nav a:hover { color: var(--text); }
@@ -366,7 +373,8 @@ svg { display: block; }
 .socials a { width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; color: var(--muted); border-radius: 10px; transition: color .15s, background-color .15s; }
 .socials a:hover { color: var(--text); background: rgba(255, 255, 255, .05); }
 .socials .ic { width: 20px; height: 20px; stroke: none; fill: currentColor; }
-.copy { width: 100%; text-align: right; color: var(--muted-2); font-size: .8125rem; margin-top: 4px; }
+.footer-bottom { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px 24px; flex-wrap: wrap; margin-top: 4px; }
+.copy { text-align: right; color: var(--muted-2); font-size: .8125rem; }
 
 /* ─── Reveal (скрытие включается только при работающем JS — класс .js на <html>) ── */
 .js .reveal { opacity: 0; transform: translateY(14px); transition: opacity .55s var(--ease), transform .55s var(--ease); transition-delay: var(--d, 0ms); }
@@ -444,6 +452,7 @@ svg { display: block; }
   .btn-block { white-space: normal; line-height: 1.25; padding-block: 12px; }
   .cta-inner { flex-direction: column; align-items: flex-start; }
   .cta-actions, .cta-side .trust { justify-content: flex-start; }
+  .cta-tg { text-align: left; }
   .cta-road { display: none; }
   .footer-nav { margin-left: 0; width: 100%; flex-wrap: wrap; }
   .copy { text-align: left; }
