@@ -1,0 +1,27 @@
+---
+import '../../styles/admin.css';
+import {getSession,secureHeaders} from '../../lib/auth';
+import {navItems,renderAdmin} from '../../lib/admin';
+import type { Env } from '../../lib/content';
+import { env as cloudflareEnv } from 'cloudflare:workers';
+export const prerender=false;
+const env=cloudflareEnv as unknown as Env;
+for(const [key,value] of Object.entries(secureHeaders()))Astro.response.headers.set(key,value);
+let session;
+try {session=await getSession(Astro.request,env)}catch {return Astro.redirect('/admin/login')}
+if(!session)return Astro.redirect('/admin/login');
+const section=Astro.params.section||'';
+let page;
+try {page=await renderAdmin(section,env,session,Astro.url)}catch {Astro.response.status=503;page={title:'Данные временно недоступны',html:'<section class="panel"><p>Не удалось загрузить данные. Проверьте подключение базы и применение миграций.</p><a href="/admin">Повторить</a></section>'}}
+if(page.title==='Страница не найдена'||page.title==='Диалог не найден')Astro.response.status=404;
+const error=Astro.url.searchParams.get('error');
+const uploaded=Astro.url.searchParams.get('uploaded');
+---
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><meta name="robots" content="noindex,nofollow"/><title>{page.title} — Avocado Admin</title><link rel="stylesheet" href="/css/fonts.css"/><link rel="icon" href="/favicon.svg" type="image/svg+xml"/></head>
+<body><a class="skip-link" href="#main">К содержимому</a><div class="admin-shell"><aside class="sidebar"><a class="brand" href="/admin">Avocado<span>Рабочее пространство</span></a><nav aria-label="Администрирование">{navItems.map(([path,label])=><a href={`/admin${path?'/'+path:''}`} aria-current={section.split('/')[0]===path?'page':undefined}>{label}</a>)}</nav><div class="sidebar-bottom"><a href="/" class="text-link">Открыть сайт</a><form method="post" action="/api/admin/logout"><input type="hidden" name="csrf" value={session.csrf}/><button class="button secondary" type="submit">Выйти</button></form></div></aside><main class="admin-main" id="main"><header class="page-head"><p class="eyebrow">Avocado / Управление</p><h1>{page.title}</h1><p class="muted">{new Date().toLocaleDateString('ru-RU',{year:'numeric',month:'long',day:'numeric',timeZone:'UTC'})}</p></header>
+{Astro.url.searchParams.has('saved')&&<p class="notice" role="status">Изменения сохранены.</p>}
+{error&&<p class="notice error" role="alert">{error}</p>}
+{Astro.url.searchParams.get('warning')==='delivery'&&<p class="notice error" role="alert">Ответ сохранён в истории, но Telegram не подтвердил доставку посетителю. Проверьте диалог перед повторной отправкой.</p>}
+{uploaded&&<p class="notice" role="status">Картинка загружена. Путь: <code>{uploaded}</code></p>}
+<Fragment set:html={page.html}/></main></div></body></html>

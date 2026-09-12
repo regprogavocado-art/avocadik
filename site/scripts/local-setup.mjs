@@ -6,7 +6,7 @@ const password = randomBytes(24).toString('base64url');
 const salt = randomBytes(32);
 const hash = 'pbkdf2-sha256$100000$' + salt.toString('hex') + '$' + pbkdf2Sync(password, salt, 100000, 32, 'sha256').toString('hex');
 const sessionSecret = randomBytes(32).toString('hex');
-const internalSecret = 'local-admin-api-secret-0123456789abcdef0123456789';
+const internalSecret = randomBytes(32).toString('hex');
 await writeFile(envPath, [
  'ADMIN_PASSWORD_HASH="'+hash+'"',
  'SESSION_SECRET="'+sessionSecret+'"',

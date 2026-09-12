@@ -1,0 +1,21 @@
+---
+import '../../styles/admin.css';
+import {configured,getSession,loginChallenge,secureHeaders} from '../../lib/auth';
+import type { Env } from '../../lib/content';
+import { env as cloudflareEnv } from 'cloudflare:workers';
+export const prerender=false;
+const env=cloudflareEnv as unknown as Env;
+let enabled=configured(env),unavailable=false;
+try {if(await getSession(Astro.request,env))return Astro.redirect('/admin');}catch {enabled=false;unavailable=true;}
+const challenge=loginChallenge(Astro.request);
+for(const [key,value] of Object.entries(secureHeaders()))Astro.response.headers.set(key,value);
+Astro.response.headers.set('Set-Cookie',challenge.cookie);
+if(!enabled)Astro.response.status=503;
+const invalid=Astro.url.searchParams.get('error')==='credentials';
+---
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><meta name="robots" content="noindex,nofollow"/><title>Вход в админку — Avocado</title><link rel="stylesheet" href="/css/fonts.css"/><link rel="icon" href="/favicon.svg" type="image/svg+xml"/></head>
+<body class="login-page"><main class="login-card"><a class="brand" href="/">Avocado<span>Рабочее пространство</span></a><h1>Вход в админку</h1><p class="muted">Контент, заявки и оплата — в одном месте.</p>
+{invalid&&<p class="notice error" role="alert">Не удалось войти. Проверьте пароль.</p>}
+{enabled?<form method="post" action="/api/admin/login"><input type="hidden" name="csrf" value={challenge.csrf}/><label>Пароль<input type="password" name="password" autocomplete="current-password" required maxlength="256" autofocus/></label><button class="button" type="submit">Войти</button></form>:<p class="notice" role="status">{unavailable?'База данных временно недоступна. Попробуйте позже.':'Вход пока не настроен. Нужны подключённая база данных и секреты администратора.'}</p>}
+<a class="text-link" href="/">Вернуться на сайт</a></main></body></html>
