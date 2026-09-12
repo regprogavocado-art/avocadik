@@ -1,0 +1,36 @@
+---
+import Icon from './Icon.astro';
+interface Props { product: 'hass' | 'ettinger'; }
+const { product } = Astro.props;
+const hass = product === 'hass';
+const prefix = `scene-${product}`;
+---
+<div class:list={['product-scene', `product-scene-${product}`]}>
+  <div class="scene-header"><svg width="17" height="17" aria-hidden="true"><use href="#i-avocado"/></svg><span>Avocado {hass ? 'Hass' : 'Ettinger'}</span><span class="scene-header-line"></span></div>
+  <div class="scene-canvas" aria-hidden="true">
+    <svg class="scene-diagram" viewBox="0 0 260 235" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id={`${prefix}-metal`} x1="72" y1="50" x2="194" y2="195" gradientUnits="userSpaceOnUse"><stop stop-color={hass ? '#9ab8ac' : '#d5b680'}/><stop offset=".2" stop-color={hass ? '#244538' : '#4b3925'}/><stop offset=".53" stop-color={hass ? '#0d251a' : '#201a12'}/><stop offset=".8" stop-color={hass ? '#355b45' : '#6a5130'}/><stop offset="1" stop-color="#090f0b"/></linearGradient>
+        <linearGradient id={`${prefix}-edge`} x1="82" y1="63" x2="185" y2="171" gradientUnits="userSpaceOnUse"><stop stop-color={hass ? '#c0f8d6' : '#ffe6b2'}/><stop offset=".52" stop-color={hass ? '#6faa80' : '#c79853'}/><stop offset="1" stop-color={hass ? '#244634' : '#725632'}/></linearGradient>
+        <radialGradient id={`${prefix}-light`}><stop stop-color={hass ? '#8ff0a6' : '#e3b45c'} stop-opacity=".16"/><stop offset="1" stop-color={hass ? '#8ff0a6' : '#e3b45c'} stop-opacity="0"/></radialGradient>
+      </defs>
+      <ellipse cx="130" cy="163" rx="120" ry="67" fill={`url(#${prefix}-light)`}/>
+      <g stroke={hass ? '#3f6a51' : '#6f5638'} stroke-opacity=".45" stroke-width=".75"><path d="M0 177L130 112 260 177M0 204L130 139 260 204M0 231L130 166 260 231M22 145L152 210M64 125L194 190M106 105L236 170M238 145L108 210M196 125L66 190M154 105L24 170"/></g>
+      <ellipse cx="130" cy="178" rx="46" ry="15" fill="#020605" fill-opacity=".85"/>
+      {hass ? <>
+        <path d="M130 47L180 67v45c0 31-22 52-50 67-28-15-50-36-50-67V67l50-20Z" fill="#0a130e" stroke="#314137" stroke-width="2" transform="translate(6 5)"/>
+        <path d="M130 47L180 67v45c0 31-22 52-50 67-28-15-50-36-50-67V67l50-20Z" fill={`url(#${prefix}-metal)`} stroke={`url(#${prefix}-edge)`} stroke-width="1.5"/>
+        <path d="M130 60l37 16v36c0 22-15 39-37 52-22-13-37-30-37-52V76l37-16Z" stroke="#adcdb5" stroke-opacity=".17"/>
+        <path d="M113 109l12 12 24-27" stroke="#c9f5d6" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <g stroke="#8ff0a6" stroke-opacity=".55"><path d="M31 94h22l21 13M191 110l20-19h24M48 179l30-12M195 173l25 10"/><circle cx="28" cy="94" r="3"/><circle cx="238" cy="91" r="3"/><circle cx="45" cy="180" r="3"/><circle cx="223" cy="184" r="3"/></g>
+      </> : <>
+        <g stroke={`url(#${prefix}-edge)`} stroke-width="1.1"><path d="M130 126l52 28-52 29-52-29 52-28Z" fill="#171b13"/><path d="M78 154v10l52 29 52-29v-10l-52 29-52-29Z" fill="#151910"/><path d="M130 101l52 28-52 29-52-29 52-28Z" fill={`url(#${prefix}-metal)`}/><path d="M78 129v10l52 29 52-29v-10l-52 29-52-29Z" fill="#201c13"/><path d="M130 76l52 28-52 29-52-29 52-28Z" fill={`url(#${prefix}-metal)`}/><path d="M78 104v10l52 29 52-29v-10l-52 29-52-29Z" fill="#30261a"/></g>
+        <path d="M113 104l17-10 17 10-17 10-17-10Z" fill="#e9c886" fill-opacity=".25" stroke="#e9c886"/>
+        <g stroke="#e3b45c" stroke-opacity=".55"><path d="M33 83h25l35 17M166 94l34-25h23M32 162h23l23-13M184 145l28 17h20"/><circle cx="30" cy="83" r="3"/><circle cx="226" cy="69" r="3"/><circle cx="29" cy="162" r="3"/><circle cx="235" cy="162" r="3"/></g>
+      </>}
+    </svg>
+    <span class="scene-node scene-node-top"><Icon name={hass ? 'globe' : 'cpu'}/></span><span class="scene-node scene-node-bottom"><Icon name={hass ? 'server' : 'globe'}/></span>
+  </div>
+  <div class="scene-capabilities"><span><Icon name={hass ? 'shield' : 'layers'}/>{hass ? 'Защита' : 'Процессы'}</span><span><Icon name={hass ? 'route' : 'cpu'}/>{hass ? 'Трафик' : 'Автоматизация'}</span></div>
+  <p class="scene-caption">{hass ? 'Архитектура защиты' : 'Архитектура автоматизации'}</p>
+</div>

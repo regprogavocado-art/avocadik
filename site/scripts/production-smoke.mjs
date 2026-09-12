@@ -11,8 +11,11 @@ import { fileURLToPath } from 'node:url';
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const output = resolve(root, 'site/output/production-smoke.json');
 const workerBase = 'https://avocado-chat.avocado-chat-worker.workers.dev';
-const routes = ['/', '/hass', '/ettinger', '/rent', '/catalog', '/catalog/domains', '/catalog/vps', '/catalog/dedicated', '/catalog/bulletproof', '/catalog/proxies', '/catalog/vps/vps', '/countries', '/payment', '/news', '/contacts'];
+const routes = ['/', '/software', '/hass', '/ettinger', '/rent', '/catalog', '/catalog/domains', '/catalog/vps', '/catalog/dedicated', '/catalog/bulletproof', '/catalog/proxies', '/catalog/vps/vps', '/catalog/domains/domain-com', '/catalog/proxies/ipv4-private', '/countries', '/payment', '/news', '/contacts'];
 const secrets = new Set();
+const procurementSources = await readFile(resolve(root, 'output/procurement-sources.json'), 'utf8').then(JSON.parse).catch(error => { if (error.code === 'ENOENT') return []; throw error; });
+const privateTerms = procurementSources.flatMap(record => [record.sourceName, new URL(record.sourceUrl).hostname]).filter(Boolean);
+const supplierReference = privateTerms.length ? new RegExp('(?<![a-z0-9_-])(?:' + privateTerms.map(value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')(?![a-z0-9_-])', 'i') : /sourceName|sourceUrl|sourceCheckedAt/;
 const report = { startedAt: new Date().toISOString(), base: null, readOnlyContent: true, checks: [], telegram: null, admin: { requested: false, loggedIn: false, loggedOut: false } };
 
 function safe(text) {
@@ -75,12 +78,24 @@ async function main() {
     return route.abort();
   });
   try {
+    const productPaths = new Set();
     for (const path of routes) {
       browserErrors = 0;
       const response = await page.goto(base + path, { waitUntil: 'networkidle', timeout: 35_000 });
       check(`${path}: HTTP 200`, response?.status() === 200, { status: response?.status() });
       check(`${path}: single H1`, await page.locator('h1').count() === 1);
       check(`${path}: no browser errors`, browserErrors === 0, { errors: browserErrors });
+      if (path === '/' || path === '/software' || path === '/countries' || path.startsWith('/catalog')) {
+        check(`${path}: supplier details stay private`, !supplierReference.test(await response.text()) && !supplierReference.test(await page.content()));
+        for (const href of await page.locator('a[href^="/catalog/"]').evaluateAll(links => links.map(link => link.getAttribute('href')))) {
+          if (/^\/catalog\/[a-z-]+\/[a-z0-9-]+$/.test(href)) productPaths.add(href);
+        }
+      }
+    }
+    for (const path of productPaths) {
+      const response = await get(base + path);
+      check(`${path}: public product available`, response.status === 200);
+      check(`${path}: no supplier identity in product HTML`, !supplierReference.test(await response.text()));
     }
     for (const path of ['/not-a-production-page', '/catalog/not-a-category', '/news/not-a-news-item']) {
       const response = await get(base + path);

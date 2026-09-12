@@ -1,0 +1,5 @@
+---
+interface Props { compact?: boolean; }
+const {compact=false}=Astro.props;
+---
+<a href="/" class="brand brand-signature"><svg width="44" height="44" aria-hidden="true"><use href="#i-avocado"/></svg><span class="brand-wordmark">Avocado{!compact && <small>Разработка ПО</small>}</span></a>
