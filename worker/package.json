@@ -9,7 +9,8 @@
     "deploy": "wrangler deploy",
     "d1:create": "wrangler d1 create avocado-chat",
     "tail": "wrangler tail",
-    "mock:tg": "node scripts/mock-telegram.mjs"
+    "mock:tg": "node scripts/mock-telegram.mjs",
+    "test": "node --test tests/worker-test.mjs"
   },
   "devDependencies": {
     "wrangler": "^4.131.1"

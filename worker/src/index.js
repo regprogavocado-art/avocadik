@@ -11,12 +11,17 @@
  *   GET  /api/health
  *   GET  /api/chat/:sid/messages?after=<id>
  *   POST /api/chat/:sid/messages            { text, name?, contact?, page? }
+ *   POST /api/internal/chat/:sid/reply     { text } — X-Admin-Api-Key, server only
  *   POST /tg/webhook                         (Telegram, заголовок X-Telegram-Bot-Api-Secret-Token)
  *   GET  /tg/setup                           (заголовок X-Setup-Key: <WEBHOOK_SECRET>) — регистрирует webhook
  *
  * Секреты (wrangler secret put …): TELEGRAM_BOT_TOKEN, ADMIN_CHAT_ID, WEBHOOK_SECRET, IP_SALT
  * Переменные (wrangler.toml [vars]): ALLOWED_ORIGINS, ADMIN_THREAD_ID (опц., тема в группе)
+ * Новости: NEWS_CHANNEL_ID (пусто — выключены), NEWS_MEDIA (R2 binding).
+ * Админка: ADMIN_API_SECRET — отдельный секрет, минимум 32 символа; только Pages server-side.
  */
+
+import { importChannelPost, backfillNewsMedia } from './news.js';
 
 const SID_RE = /^[a-z0-9]{16,64}$/i;
 const MAX_TEXT = 2000;                      // сообщение посетителя
@@ -31,6 +36,11 @@ const LAST_ACTIVE_WINDOW_MS = 24 * 60 * 60_000;
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+    // Server-to-server only. Never emit browser CORS headers for these routes.
+    if (url.pathname.startsWith('/api/internal/')) {
+      try { return await internalApi(request, url, env); }
+      catch { console.error('internal chat API failed'); return json({ error: 'internal' }, 500); }
+    }
     const cors = corsHeaders(request, env);
 
     if (request.method === 'OPTIONS') {
@@ -72,7 +82,18 @@ export default {
       if (url.pathname === '/tg/webhook' && request.method === 'POST') {
         const secret = request.headers.get('X-Telegram-Bot-Api-Secret-Token') || '';
         if (!env.WEBHOOK_SECRET || secret !== env.WEBHOOK_SECRET) return new Response('forbidden', { status: 403 });
-        try { await ensureSchema(env.DB); await telegramWebhook(request, env); }
+        const update = await request.json().catch(() => null);
+        if (update && (update.channel_post || update.edited_channel_post)) {
+          try { await importChannelPost(update.channel_post || update.edited_channel_post, env, tg); }
+          catch {
+            // News upserts are idempotent. Let Telegram retry D1/R2/network failures.
+            // Never log download URLs: they contain the bot token.
+            console.error('Telegram news import failed; awaiting retry');
+            return new Response('retry', { status: 503 });
+          }
+          return ok();
+        }
+        try { await ensureSchema(env.DB); await telegramWebhook(update, env); }
         catch (e) { console.error('webhook failed', e && e.stack || e); }
         return ok(); // Telegram должен всегда получать 200: иначе он повторяет апдейт и держит очередь
       }
@@ -92,15 +113,18 @@ export default {
 
   async scheduled(event, env, ctx) {
     ctx.waitUntil(remindUnanswered(env));
+    ctx.waitUntil(backfillNewsMedia(env, tg).catch(() => {
+      console.error('Pending news photo backfill failed; will retry on a later cron');
+    }));
   }
 };
 
 /* ─── Схема D1 (создаётся лениво при первом запросе) ────────────────── */
-let schemaReady = null;
+const schemasReady = new WeakMap();
 function ensureSchema(db) {
   if (!db) throw new Error('D1 binding "DB" is missing — check wrangler.toml');
-  if (!schemaReady) {
-    schemaReady = (async () => {
+  if (!schemasReady.has(db)) {
+    const schemaReady = (async () => {
       await db.batch([
         db.prepare(`CREATE TABLE IF NOT EXISTS sessions (
           id TEXT PRIMARY KEY,
@@ -139,9 +163,55 @@ function ensureSchema(db) {
       ]) {
         try { await db.prepare(sql).run(); } catch (e) { /* duplicate column */ }
       }
-    })().catch((e) => { schemaReady = null; throw e; });
+    })().catch((e) => { schemasReady.delete(db); throw e; });
+    schemasReady.set(db, schemaReady);
   }
-  return schemaReady;
+  return schemasReady.get(db);
+}
+
+/* ─── Admin: ответ через серверный service binding ─────────────────── */
+async function internalApi(request, url, env) {
+  const provided = request.headers.get('X-Admin-Api-Key') || '';
+  if (!await secretEqual(provided, env.ADMIN_API_SECRET)) return json({ error: 'forbidden' }, 403);
+  const match = /^\/api\/internal\/chat\/([^/]+)\/reply$/.exec(url.pathname);
+  if (!match) return json({ error: 'not_found' }, 404);
+  if (request.method !== 'POST') return json({ error: 'method_not_allowed' }, 405);
+  const sid = match[1];
+  if (!SID_RE.test(sid)) return json({ error: 'bad_session' }, 400);
+  const payload = await request.json().catch(() => null);
+  if (typeof payload?.text !== 'string' || payload.text.length > MAX_ADMIN_TEXT) return json({ error: 'bad_request' }, 400);
+  const text = clean(payload.text, MAX_ADMIN_TEXT);
+  if (!text) return json({ error: 'empty' }, 400);
+  await ensureSchema(env.DB);
+  const session = await env.DB.prepare('SELECT id, tg_user_chat_id FROM sessions WHERE id = ?').bind(sid).first();
+  if (!session) return json({ error: 'session_not_found' }, 404);
+  const now = Date.now();
+  const results = await env.DB.batch([
+    env.DB.prepare("INSERT INTO messages (session_id, sender, text, created_at) VALUES (?, 'admin', ?, ?) RETURNING id")
+      .bind(sid, text, now),
+    env.DB.prepare('UPDATE sessions SET last_admin_at = ? WHERE id = ?').bind(now, sid)
+  ]);
+  let delivered = true;
+  if (session.tg_user_chat_id) {
+    try {
+      const sent = await tg(env, 'sendMessage', { chat_id: session.tg_user_chat_id, text });
+      delivered = Boolean(sent);
+    } catch { delivered = false; console.error('Admin reply saved but Telegram delivery failed'); }
+  }
+  return json({ id: results[0].results[0].id, ts: now, delivered, channel: session.tg_user_chat_id ? 'telegram' : 'website' });
+}
+
+async function secretEqual(provided, expected) {
+  if (typeof expected !== 'string' || expected.length < 32 || provided.length > 512) return false;
+  const encoder = new TextEncoder();
+  const [a, b] = await Promise.all([
+    crypto.subtle.digest('SHA-256', encoder.encode(provided)),
+    crypto.subtle.digest('SHA-256', encoder.encode(expected))
+  ]);
+  const left = new Uint8Array(a), right = new Uint8Array(b);
+  let difference = 0;
+  for (let i = 0; i < left.length; i++) difference |= left[i] ^ right[i];
+  return difference === 0;
 }
 
 /* ─── Виджет: история ───────────────────────────────────────────────── */
@@ -225,8 +295,7 @@ async function postMessage(request, env, sid, cors) {
 }
 
 /* ─── Telegram: входящие апдейты ────────────────────────────────────── */
-async function telegramWebhook(request, env) {
-  const update = await request.json().catch(() => null);
+async function telegramWebhook(update, env) {
   const msg = update && update.message;
   if (!msg || !msg.chat) return;
   const chatId = String(msg.chat.id);
@@ -454,7 +523,7 @@ async function telegramSetup(request, url, env) {
   if (!env.TELEGRAM_BOT_TOKEN) return json({ error: 'TELEGRAM_BOT_TOKEN is not set' }, 500);
   const hook = `${url.origin}/tg/webhook`;
   const result = await tg(env, 'setWebhook', {
-    url: hook, secret_token: env.WEBHOOK_SECRET, allowed_updates: ['message'], drop_pending_updates: false
+    url: hook, secret_token: env.WEBHOOK_SECRET, allowed_updates: ['message', 'channel_post', 'edited_channel_post'], drop_pending_updates: false
   });
   const me = await tg(env, 'getMe', {});
   return json({ ok: true, webhook: hook, bot: me && me.username ? '@' + me.username : null, admin: Boolean(env.ADMIN_CHAT_ID), result });
@@ -468,7 +537,11 @@ async function tg(env, method, payload) {
     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
   });
   const data = await res.json().catch(() => ({}));
-  if (!data.ok) throw new Error(`Telegram ${method}: ${data.description || ('HTTP ' + res.status)}`);
+  if (!data.ok) {
+    const error = new Error(`Telegram ${method}: ${data.description || ('HTTP ' + res.status)}`);
+    error.status = Number(data.error_code || res.status);
+    throw error;
+  }
   return data.result;
 }
 

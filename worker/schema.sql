@@ -1,6 +1,7 @@
 -- Справочно: схема D1. Воркер создаёт таблицы сам при первом запросе (ensureSchema)
 -- и добавляет недостающие колонки в старые базы. Файл нужен только для ручного просмотра:
 --   npx wrangler d1 execute avocado-chat --remote --file=schema.sql
+-- Таблица news для Telegram/CMS: migrations/0002_news.sql (см. NEWS.md).
 
 CREATE TABLE IF NOT EXISTS sessions (
   id TEXT PRIMARY KEY,              -- id сессии посетителя (генерируется в браузере)
