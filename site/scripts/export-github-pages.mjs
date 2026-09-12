@@ -137,7 +137,13 @@ export function transformHTML(html, { sourceOrigin = SOURCE_ORIGIN, fetchPath = 
     if (node.type !== ELEMENT_NODE) return;
     const tag = node.name.toLowerCase();
     const attrs = node.attributes;
-    if (tag === 'base' || tag === 'iframe' || tag === 'form') throw new Error('Unexpected active element in public export');
+    if (tag === 'base' || tag === 'iframe') throw new Error('Unexpected active element in public export');
+    if (tag === 'form') {
+      const order = Object.hasOwn(attrs, 'data-order-form') && attrs.method === 'dialog';
+      const domain = Object.hasOwn(attrs, 'data-domain-form') && attrs.method === 'get';
+      if ((!order && !domain) || attrs.action || attrs.target) throw new Error('Unexpected active element in public export');
+    }
+    if (tag === 'input' && (attrs.type || '').toLowerCase() === 'password') throw new Error('Authentication fields cannot enter the public export');
     if (tag === 'a' && attrs.href) {
       const local = internalURL(attrs.href, sourceOrigin, fetchPath);
       if (local && /^\/admin(?:\/|$)/.test(local.pathname)) attrs.href = SOURCE_ORIGIN + local.pathname + local.search + local.hash;

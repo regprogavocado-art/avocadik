@@ -96,6 +96,17 @@ test('schema changes and private procurement fields fail closed', () => {
   assert.throws(() => assertPublicContent('<p>confidential supplier</p>', [/confidential supplier/]), /Private/);
 });
 
+test('only local domain and order forms are permitted; login and remote submission stay excluded', () => {
+  for (const form of ['<form data-domain-form method="get"><input name="domain"></form>', '<form data-order-form method="dialog"><textarea name="comment"></textarea></form>']) {
+    const result=transformHTML(fixture.replace('<body>','<body>'+form));
+    assert.match(result.html, /<form/);
+  }
+  for (const form of ['<form data-domain-form method="post"></form>','<form data-order-form method="dialog" action="https://example.test"></form>','<form data-domain-form method="get" action="/api/admin/login"></form>','<form method="get"></form>']) {
+    assert.throws(()=>transformHTML(fixture.replace('<body>','<body>'+form)),/active element/);
+  }
+  assert.throws(()=>transformHTML(fixture.replace('<body>','<body><input type="password">')),/Authentication fields/);
+});
+
 test('fetch guards reject foreign redirects, bad content types, size overflow and error responses', async () => {
   const options = { allowedTypes: ['text/html'], limit: 10, sourceOrigin: SOURCE_ORIGIN };
   await assert.rejects(fetchBounded(SOURCE_ORIGIN, { ...options, fetchImpl: async () => new Response('', { status: 302, headers: { location: 'https://evil.test/' } }), redirectAllowed: () => true }), /redirect/);

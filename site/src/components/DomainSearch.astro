@@ -1,0 +1,22 @@
+---
+import type { Product } from '../lib/content';
+import { domainOffers } from '../lib/order';
+import Icon from './Icon.astro';
+interface Props { products: Product[]; id?: string; compact?: boolean; }
+const { products, id = 'domain-search', compact = false } = Astro.props;
+const offers = domainOffers(products);
+const zones = offers.length ? offers.map(offer => offer.zone) : ['com', 'net', 'org'];
+const offersJson = JSON.stringify(offers).replace(/</g, '\\u003c');
+---
+<section class:list={['domain-search', { 'domain-search-compact': compact }]} id={id} aria-labelledby={`${id}-title`}>
+  <div class="domain-search-copy"><h2 id={`${id}-title`}>Начните с домена.</h2><p>Подберите имя для вашего проекта.</p></div>
+  <div class="domain-search-controls">
+    <form data-domain-form method="get" aria-labelledby={`${id}-title`}>
+      <div class="domain-input-group"><label for={`${id}-name`}>Доменное имя</label><input id={`${id}-name`} name="domain" type="text" placeholder="your-project" autocomplete="off" autocapitalize="none" spellcheck="false" inputmode="url" maxlength="253" required aria-describedby={`${id}-note ${id}-error`} /><label for={`${id}-zone`}>Зона</label><select id={`${id}-zone`} name="zone">{zones.map(zone => <option value={zone}>.{zone}</option>)}</select></div>
+      <button class="button button-primary" type="submit">Подобрать домен<Icon name="arrow" /></button>
+      <p class="order-error domain-search-error" id={`${id}-error`} data-domain-error role="alert" hidden></p>
+    </form>
+    <div class="domain-search-details">{offers.length > 0 && <ul class="domain-zone-prices" aria-label="Стоимость регистрации">{offers.slice(0, 3).map(offer => <li><button type="button" data-domain-zone={offer.zone}><strong>.{offer.zone}</strong><span>{offer.product.priceLabel}</span></button></li>)}</ul>}<p id={`${id}-note`} class="domain-search-note"><svg class="ic" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v1"/></svg>Доступность домена подтвердим перед выставлением счёта.</p></div>
+    <script is:inline type="application/json" data-domain-offers set:html={offersJson} />
+  </div>
+</section>

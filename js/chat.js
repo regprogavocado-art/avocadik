@@ -213,6 +213,16 @@
   /* ── открыть / закрыть ─────────────────────────────────────────── */
   function open(opts) {
     opts = opts || {};
+    let orderDraft;
+    let orderReplacesPrefill = false;
+    if (opts.appendDraft && opts.text && !offline) {
+      const current = el.text.value;
+      const requested = String(opts.text).trim();
+      orderReplacesPrefill = !current.trim() || current.trim() === state.lastPrefill;
+      orderDraft = orderReplacesPrefill ? requested : (current === requested || current.endsWith('\n\n' + requested) ? current : current + '\n\n' + requested);
+      // The caller can keep its order form open: never truncate or silently discard a visitor's draft.
+      if (orderDraft.length > el.text.maxLength) return false;
+    }
     if (offline) renderOffline(opts.text || '');
     state.opener = opts.opener || (document.activeElement && document.activeElement !== document.body ? document.activeElement : null);
     state.open = true;
@@ -225,7 +235,11 @@
     markSeen();
     touch();
     if (!state.loaded && !offline) loadHistory();
-    if (opts.text && !offline) {
+    if (orderDraft !== undefined) {
+      el.text.value = orderDraft;
+      state.lastPrefill = orderReplacesPrefill ? orderDraft.trim() : '';
+      autosize();
+    } else if (opts.text && !offline) {
       const cur = el.text.value.trim();
       // подставляем текст CTA только в пустое поле или поверх нетронутой прошлой подстановки
       if (!cur || cur === state.lastPrefill) { el.text.value = opts.text; state.lastPrefill = opts.text.trim(); autosize(); }
@@ -234,6 +248,7 @@
     setTimeout(() => target.focus(), 60);
     if (!offline) el.text.focus();
     schedulePoll();
+    return true;
   }
   function close() {
     state.open = false;

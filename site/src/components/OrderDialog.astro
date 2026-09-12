@@ -1,0 +1,28 @@
+---
+import Icon from './Icon.astro';
+import { osChoices } from '../lib/order';
+import orderCss from '../styles/order.css?raw';
+---
+<style is:inline set:html={orderCss} />
+<dialog id="avocado-order" class="order-dialog" aria-labelledby="order-title" aria-describedby="order-description">
+  <div class="order-heading"><h2 id="order-title">Заказать услугу</h2><button type="button" class="order-close" data-order-close aria-label="Закрыть оформление заказа"><Icon name="close" /></button></div>
+  <p id="order-description" class="order-summary" data-order-summary></p>
+  <form method="dialog" data-order-form>
+    <div class="order-field" data-order-domain-entry-row hidden><label class="order-label" for="order-domain-input">Доменное имя</label><input id="order-domain-input" name="domain" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" inputmode="url" maxlength="253" required disabled aria-describedby="order-domain-entry-note order-error" /><p id="order-domain-entry-note" class="order-field-note">Доступность имени и стоимость продления подтвердит оператор.</p></div>
+    <div class="order-field" data-order-domain-row hidden><span class="order-label">Домен для проверки</span><output class="order-readonly order-domain-name" data-order-domain></output><p class="order-field-note">Доступность имени и стоимость регистрации и продления подтвердит оператор.</p></div>
+    <div class="order-field" data-order-country-row>
+      <label class="order-label" for="order-country" data-order-country-label>Страна размещения</label>
+      <div class="order-country-choice"><img data-order-flag src="/assets/flags/fi.svg" width="24" height="16" alt="" hidden /><select id="order-country" name="country" aria-label="Страна размещения" hidden></select><span class="order-readonly" data-order-country-value></span></div>
+    </div>
+    <div class="order-field" data-order-os-row hidden><label class="order-label" for="order-os">Операционная система — пожелание</label><select id="order-os" name="os">{osChoices.map(os => <option value={os}>{os}</option>)}</select></div>
+    <div class="order-field"><label class="order-label" for="order-comment">Комментарий <span>необязательно</span></label><textarea id="order-comment" name="comment" rows="2" maxlength="400" placeholder="Срок аренды, перенос проекта или другие пожелания"></textarea></div>
+    <div class="order-price"><span>Цена на сайте</span><strong data-order-price></strong></div>
+    <p class="order-price-note" data-order-price-note></p>
+    <p class="order-error" id="order-error" role="alert" hidden></p>
+    <button class="button button-primary order-submit" type="submit">Продолжить в чате<Icon name="arrow" /></button>
+    <button class="order-open-chat" type="button" data-order-existing-chat hidden>Открыть текущий черновик чата</button>
+    <p class="order-footnote" data-order-footnote>Подтвердим наличие и подготовим счёт. Оплата криптовалютой после согласования.</p>
+  </form>
+</dialog>
+<noscript><p class="container order-noscript">Для оформления заказа включите JavaScript или напишите нам в Telegram по ссылке в контактах.</p></noscript>
+<script>import '../scripts/order';</script>

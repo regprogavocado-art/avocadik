@@ -1,0 +1,8 @@
+---
+import type { Product, Country } from '../lib/content';
+import { orderProduct } from '../lib/order';
+import Icon from './Icon.astro';
+interface Props { product: Product; countries?: Country[]; label?: string; variant?: 'primary' | 'secondary' | 'text'; class?: string; }
+const { product, countries = [], label = product.availability === 'soon' ? 'Узнать о запуске' : 'Заказать', variant = 'primary', class: className = '' } = Astro.props;
+---
+<button type="button" class:list={['button', `button-${variant}`, className]} data-order={JSON.stringify(orderProduct(product, countries))} aria-haspopup="dialog" aria-controls="avocado-order">{label}<Icon name="arrow" /></button>
