@@ -158,23 +158,9 @@ svg { display: block; }
     linear-gradient(90deg, var(--bg) 0%, rgba(8, 10, 9, .85) 18%, rgba(8, 10, 9, 0) 55%),
     linear-gradient(180deg, rgba(8, 10, 9, .35) 0%, rgba(8, 10, 9, 0) 25%, rgba(8, 10, 9, 0) 80%, var(--bg) 100%);
 }
-.hero-mountains { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 62%; }
-.mt-far { fill: url(#g-mt-far); }
-.mt-mid { fill: url(#g-mt-mid); }
-.mt-near { fill: #070a08; }
-.lake { fill: url(#g-lake); }
-.hero-halo { position: absolute; width: 640px; height: 640px; left: 50%; top: 58%; transform: translate(-50%, -50%); z-index: 2; }
-.hero-avocado {
-  position: absolute; z-index: 3;
-  width: clamp(260px, 26vw, 380px); height: auto;
-  left: 50%; bottom: 2%; transform: translateX(-50%);
-}
-/* свечение косточки: только opacity/transform — рисуется на композиторе, без перерисовки SVG */
-.hero-avocado .seed-glow { animation: seed-breathe 5.5s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
-@keyframes seed-breathe {
-  0%, 100% { opacity: .75; transform: scale(.94); }
-  50% { opacity: 1; transform: scale(1.06); }
-}
+/* рендер сцены: авокадо на камнях у озера */
+.hero-img, .hero-img img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.hero-img img { object-fit: cover; object-position: 50% 100%; display: block; }
 .hero-poster {
   position: absolute; z-index: 4;
   right: clamp(24px, 5vw, 72px); top: 16%;
@@ -336,9 +322,10 @@ svg { display: block; }
 .plan .btn { margin-top: auto; }
 .plan-featured { border-color: rgba(143, 240, 166, .35); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .05), 0 0 0 1px rgba(143, 240, 166, .12), 0 30px 60px -40px rgba(143, 240, 166, .4); }
 .badge { position: absolute; top: 22px; right: 22px; font-size: .75rem; font-weight: 600; color: var(--mint); background: rgba(143, 240, 166, .12); border: 1px solid rgba(143, 240, 166, .3); border-radius: 999px; padding: 4px 12px; }
-.pricing-visual { position: relative; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--line); min-height: 420px; }
-.pv-scene { position: absolute; inset: 0; width: 100%; height: 100%; }
-.pv-text { position: absolute; left: 26px; right: 26px; top: 28px; }
+.pricing-visual { position: relative; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--line); min-height: 420px; background: #0a1214; }
+.pv-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 62%; display: block; }
+.pricing-visual::before { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(180deg, rgba(8, 10, 9, .88) 0%, rgba(8, 10, 9, .55) 34%, rgba(8, 10, 9, 0) 60%); pointer-events: none; }
+.pv-text { position: absolute; left: 26px; right: 26px; top: 28px; z-index: 2; }
 .pv-text p { font-family: var(--font-display); font-weight: 700; font-size: 1.375rem; line-height: 1.3; letter-spacing: -.01em; text-wrap: balance; }
 .pv-text span { display: block; margin-top: 22px; font-family: var(--font-mono); font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: var(--gold); }
 .pricing-note { margin-top: 22px; color: var(--muted); font-size: .9375rem; }
@@ -347,7 +334,13 @@ svg { display: block; }
 
 /* ─── CTA ──────────────────────────────────────────────────────────── */
 .cta { position: relative; overflow: hidden; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--bg-2); }
-.cta-bg { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .95; }
+.cta-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 100% 55%; display: block; }
+.cta-shade {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(90deg, var(--bg-2) 0%, rgba(11, 14, 12, .92) 28%, rgba(11, 14, 12, .45) 58%, rgba(11, 14, 12, 0) 100%),
+    linear-gradient(180deg, rgba(11, 14, 12, .55) 0%, rgba(11, 14, 12, 0) 45%);
+}
 .cta-inner { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 40px; padding-block: clamp(56px, 7vw, 88px); }
 .cta-text { max-width: 520px; }
 .cta-text h2 { text-wrap: balance; }
@@ -383,7 +376,7 @@ svg { display: block; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .js .reveal { opacity: 1; transform: none; transition: none; }
-  .hero-avocado .seed-glow, .ping::after { animation: none; }
+  .ping::after { animation: none; }
   .ping::after { opacity: .5; transform: scale(1.2); }
   .btn, .feature, .link-arrow .ic, .btn .ic { transition: none; }
 }
@@ -404,6 +397,8 @@ svg { display: block; }
   .step:nth-child(4)::after, .step:nth-child(4)::before { display: none; }
   .pricing-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .pricing-visual { grid-column: 1 / -1; min-height: 260px; }
+  .pricing-visual::before { background: linear-gradient(90deg, rgba(8, 10, 9, .9) 0%, rgba(8, 10, 9, .6) 45%, rgba(8, 10, 9, 0) 75%); }
+  .pv-img { object-position: 50% 40%; }
   .pv-text { max-width: 460px; }
 }
 @media (max-width: 1024px) {
@@ -440,8 +435,7 @@ svg { display: block; }
     border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--line);
   }
   .hero-visual::before { background: linear-gradient(180deg, rgba(8, 10, 9, 0) 70%, rgba(8, 10, 9, .6) 100%); }
-  .hero-avocado { width: 210px; bottom: 0; }
-  .hero-halo { width: 420px; height: 420px; }
+  .hero-img img { object-position: 50% 70%; }
   .hero-poster { right: 16px; top: 16px; width: 168px; padding: 16px; }
   .hero-poster p { font-size: 10px; letter-spacing: .24em; }
 
@@ -453,7 +447,8 @@ svg { display: block; }
   .cta-inner { flex-direction: column; align-items: flex-start; }
   .cta-actions, .cta-side .trust { justify-content: flex-start; }
   .cta-tg { text-align: left; }
-  .cta-road { display: none; }
+  .cta-img { object-position: 85% 50%; }
+  .cta-shade { background: linear-gradient(180deg, var(--bg-2) 0%, rgba(11, 14, 12, .9) 45%, rgba(11, 14, 12, .5) 100%); }
   .footer-nav { margin-left: 0; width: 100%; flex-wrap: wrap; }
   .copy { text-align: left; }
 }

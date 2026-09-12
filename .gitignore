@@ -11,3 +11,6 @@ Thumbs.db
 
 # wrangler, если запущен из корня
 .wrangler/
+
+# исходные рендеры (в сайт идут оптимизированные копии из assets/img)
+assets/renders/
