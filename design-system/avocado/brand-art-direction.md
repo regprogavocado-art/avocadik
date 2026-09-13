@@ -19,7 +19,7 @@
   дополнительные акценты на страницах ПО и в OG. Он не заменяет малый знак.
 
 Исходники PNG и отдельные промпты находятся в игнорируемой папке
-`D:\AvocadoREST\assets\renders\`: `hero-monument.png`, `avocado-guardian.png`,
+`assets/renders/`: `hero-monument.png`, `avocado-guardian.png`,
 `hero-monument.prompt.txt`, `avocado-guardian.prompt.txt`.
 Сгенерировано встроенным imagegen. Референс использован как направление материалов
 и композиции, текст и псевдоинтерфейсы из него не перенесены в изображения.

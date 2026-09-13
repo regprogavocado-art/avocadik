@@ -1,7 +1,7 @@
 # Текст для нового чата
 
 Продолжаем проект avocado.rest. Репозиторий github.com/regprogavocado-art/avocadik,
-локальная копия D:\AvocadoREST на Windows Server. Сначала прочитай
+локальная рабочая копия в корне проекта. Сначала прочитай
 design-system/avocado/HANDOFF.md, README.md, site/README.md и
 design-system/avocado/MASTER.md, затем проверь git status и текущую публикацию.
 

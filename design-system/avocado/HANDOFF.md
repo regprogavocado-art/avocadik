@@ -56,7 +56,7 @@
 | Что | Где и как работает |
 | --- | --- |
 | Репозиторий | `github.com/regprogavocado-art/avocadik`, ветка `main` |
-| Рабочая копия | `D:\AvocadoREST`, Windows Server 2022, PowerShell 5.1 / Git Bash |
+| Рабочая копия | корень репозитория (локальная копия) |
 | Среда | Node 26, Python 3.13 + Pillow; `gh` авторизован |
 | Публичный сайт | `https://avocado.rest`, GitHub Pages, `build_type: workflow`, HTTPS |
 | CMS и серверный рендер | `https://avocado-rest.pages.dev`, Astro 7.3.2 + `@astrojs/cloudflare` 14.3.1 |
@@ -181,7 +181,7 @@ PNG-оригиналы и промпты в `assets/renders/` вне Git.
 затем публиковать статический экспорт на GitHub. Один push исходников без обновления
 рендера Pages не заменит шаблоны публичного сайта.
 
-Из `D:\AvocadoREST\site`:
+Из каталога `site/`:
 
 ```powershell
 npm run check

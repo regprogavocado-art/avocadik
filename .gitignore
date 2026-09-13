@@ -36,3 +36,7 @@ site/.admin-password-hash
 !site/.env.example
 site/output/
 output/
+
+# локальные приватные отчёты — НЕ публиковать
+design-system/avocado/BILLING.md
+design-system/avocado/SECURITY.md
